@@ -1,3 +1,5 @@
+require("dotenv").config()
+
 const express = require("express")
 
 const app = express()
@@ -10,5 +12,8 @@ app.get("/", (request, response) => {
         message: "Bookhaven Backend Server"
     })
 })
+
+const UserControllerRoutes = require("./controllers/User/UserControllerRoutes.js")
+app.use("/user", UserControllerRoutes)
 
 module.exports = {app}
