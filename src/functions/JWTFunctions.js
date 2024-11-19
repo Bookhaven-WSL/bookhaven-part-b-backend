@@ -28,7 +28,7 @@ async function UserAuthValidation(request, response, next) {
     }
 
     let decodedData = decodeJWT(jwtToken)
-    if (!decodedData.userId) {
+    if (decodedData.userId) {
         request.authUserData = decodedData
         next()
     }

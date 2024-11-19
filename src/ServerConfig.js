@@ -10,6 +10,11 @@ app.use(express.urlencoded({extended: true}))
 const { UserAuthValidation } = require("./functions/JWTFunctions.js")
 const UserControllerRoutes = require("./controllers/User/UserControllerRoutes.js")
 
+app.use((request, response, next) => {
+    console.log(JSON.stringify(request.headers));
+    next();
+});
+
 app.get("/", (request, response) => {
     response.json({
         message: "Bookhaven Backend Server"
