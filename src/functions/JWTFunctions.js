@@ -16,11 +16,27 @@ function generateJWT(userId, username, childAccount = null) {
 }
 
 function decodeJWT(codedJwtToken) {
-
+    return jwt.verify(codedJwtToken, jwtSecretKey)
 }
 
 async function UserAuthValidation(request, response, next) {
+    let jwtToken = request.headers.jwt
+    if (!jwtToken) {
+        return response.status(403).json({
+            message: "Please sign in to view your content."
+        })
+    }
 
+    let decodedData = decodeJWT(jwtToken)
+    if (!decodedData.userId) {
+        request.authUserData = decodedData
+        next()
+    }
+    else {
+        return response.status(403).json({
+            message: "Please sign in to view your content."
+        })
+    }
 }
 
 module.exports = {

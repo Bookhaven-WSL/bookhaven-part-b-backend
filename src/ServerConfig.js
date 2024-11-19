@@ -7,13 +7,21 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
+const { UserAuthValidation } = require("./functions/JWTFunctions.js")
+const UserControllerRoutes = require("./controllers/User/UserControllerRoutes.js")
+
 app.get("/", (request, response) => {
     response.json({
         message: "Bookhaven Backend Server"
     })
 })
 
-const UserControllerRoutes = require("./controllers/User/UserControllerRoutes.js")
+app.get("/testRoute", UserAuthValidation, (request, response) => {
+    response.json({
+        message: "Hello, you can view this test route because you are signed in!"
+    })
+})
+
 app.use("/user", UserControllerRoutes)
 
 module.exports = {app}
