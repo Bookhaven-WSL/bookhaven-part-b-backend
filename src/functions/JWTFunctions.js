@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken")
 let jwtSecretKey = process.env.JWT_SECRET_KEY
 
-function generateJWT(userId, username, childAccount = null) {
+function generateJWT(userId, username, email, childAccount = null) {
     return jwt.sign(
         {
             userId: userId,
             username: username,
+            email: email,
             childAccount: childAccount
         },
         jwtSecretKey,
