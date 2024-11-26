@@ -12,7 +12,7 @@ const { UserAuthValidation } = require("./functions/JWTFunctions.js")
 const UserControllerRoutes = require("./controllers/User/UserControllerRoutes.js")
 
 let corsURLs = {
-    origin: ["http://localhost:8080"],
+    origin: ["http://localhost:8080", "https://bookhaven-part-b-backend.onrender.com/"],
     URLSuccessStatus: 200
 }
 app.use(cors(corsURLs))
