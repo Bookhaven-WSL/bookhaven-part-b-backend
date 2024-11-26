@@ -1,4 +1,5 @@
 const express = require("express")
+const bcrypt = require("bcrypt")
 const { User } = require("../../models/UserModel")
 const { generateJWT } = require("../../functions/JWTFunctions")
 const router = express.Router()
@@ -14,11 +15,7 @@ router.post("/signup", async (request, response) => {
         })
     }
 
-    if (password) {
-        let userHashedPassword = bcrypt.generate_password_hash(password).decode("utf-8")
-    }
-
-    let newUser = await User.create({username: username, email: email, password: userHashedPassword})
+    let newUser = await User.create({username: username, email: email, password: bcrypt.generate_password_hash(password).decode("utf-8")})
 
     let newJWT = generateJWT(newUser.id, newUser.username, newUser.email)
 
