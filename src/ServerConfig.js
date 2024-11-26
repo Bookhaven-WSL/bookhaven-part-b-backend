@@ -9,7 +9,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
 const { UserAuthValidation } = require("./functions/JWTFunctions.js")
-const UserControllerRoutes = require("./controllers/User/UserControllerRoutes.js")
+const AuthControllerRoutes = require("./controllers/User/AuthControllerRoutes.js")
 
 let corsURLs = {
     origin: ["http://localhost:8080", "https://bookhaven-part-b-backend.onrender.com/"],
@@ -34,6 +34,6 @@ app.get("/testRoute", UserAuthValidation, (request, response) => {
     })
 })
 
-app.use("/user", UserControllerRoutes)
+app.use("/user", AuthControllerRoutes)
 
 module.exports = {app}
