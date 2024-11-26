@@ -7,5 +7,10 @@ const PORT = process.env.PORT || 8080
 
 app.listen(PORT, async () => {
     await dbConnection()
-    console.log(`Server is running on port http://localhost:${PORT}`)
+    if (process.env.DATABASE_URL) {
+        console.log(`Server is running on MongoDB Atlas`)
+    }
+    else {
+        console.log(`Server is running on port http://localhost:${PORT}`)
+    }
 })
