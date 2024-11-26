@@ -15,7 +15,9 @@ router.post("/signup", async (request, response) => {
         })
     }
 
-    let newUser = await User.create({username: username, email: email, password: bcrypt.generate_password_hash(password).decode("utf-8")})
+    let hashedPassword = bcrypt.hash(password)
+
+    let newUser = await User.create({username: username, email: email, password: hashedPassword})
 
     let newJWT = generateJWT(newUser.id, newUser.username, newUser.email)
 
