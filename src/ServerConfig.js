@@ -34,6 +34,6 @@ app.get("/testRoute", UserAuthValidation, (request, response) => {
     })
 })
 
-app.use("/user", AuthControllerRoutes)
+app.use("/auth", AuthControllerRoutes)
 
 module.exports = {app}
