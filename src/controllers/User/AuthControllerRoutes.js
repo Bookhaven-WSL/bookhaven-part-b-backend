@@ -13,6 +13,16 @@ router.post("/signup", async (request, response) => {
         response.status(400).json({
             message: "Sorry, looks like you are missing username or password details."
         })
+        return
+    }
+
+    let userCheck = await User.findOne({email: email}).exec()
+
+    if (userCheck) {
+        response.status(400).json({
+            message: "Sorry, it appears that email is already registered."
+        })
+        return
     }
 
     const salt = bcrypt.genSaltSync(10)
