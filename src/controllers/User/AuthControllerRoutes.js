@@ -42,4 +42,42 @@ router.post("/signup", async (request, response) => {
     })
 })
 
+router.post("/login", async (request, response) => {
+    let email = request.body.email
+    let password = request.body.password
+
+    if (!email || !password) {
+        response.status(400).json({
+            message: "Sorry, looks like you are missing username or password details."
+        })
+        return
+    }
+
+    let userCheck = await User.findOne({email: email}).exec()
+
+    if (userCheck === null) {
+        response.status(400).json({
+            message: "Sorry, it appears that email is not registered."
+        })
+        return
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, userCheck.password)
+
+    if (!isPasswordValid) {
+        response.status(400).json({
+            message: "Incorrect password provided."
+        })
+        return
+    }
+
+    let newJWT = generateJWT(userCheck.id, userCheck.username, userCheck.email)
+
+    response.json({
+        jwt: newJWT,
+        message: ` Welcome back ${userCheck.username}!`
+    })
+
+})
+
 module.exports = router
