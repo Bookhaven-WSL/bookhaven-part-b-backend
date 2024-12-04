@@ -19,17 +19,25 @@ const UserSchema = new mongoose.Schema({
         required: true,
         minLength: 5,
     },
-    readBookshelf: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Book"
-    },
-    toBeReadBookshelf: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Book"
-    },
-    recommendedBookshelf: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Book"
+    bookshelves: {
+        read: [
+            {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Book"
+            }
+        ],
+        toBeRead: [
+            {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Book"
+            }
+        ],
+        recommended: [
+            {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Book"
+            }
+        ],
     }
 })
 
