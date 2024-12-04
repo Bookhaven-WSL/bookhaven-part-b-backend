@@ -5,7 +5,8 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 10,
-        trim: true
+        trim: true,
+        lowercase: true
     },
     username: {
         type: String,
@@ -17,7 +18,18 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 5,
-        trim: true
+    },
+    readBookshelf: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Book"
+    },
+    toBeReadBookshelf: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Book"
+    },
+    recommendedBookshelf: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Book"
     }
 })
 
