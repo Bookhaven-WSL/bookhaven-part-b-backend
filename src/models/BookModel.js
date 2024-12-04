@@ -1,5 +1,4 @@
 const mongoose = require("mongoose")
-const User = require("./UserModel")
 
 const BookSchema = new mongoose.Schema({
     title: {
@@ -12,6 +11,17 @@ const BookSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    genre: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    isbn: {
+        type: String
+    },
+    description: {
+        type: String,
+    },
     image: {
         type: String,
         name: String,
@@ -21,7 +31,6 @@ const BookSchema = new mongoose.Schema({
     rating: {
         type: Number,
     }
-
 })
 
 const Book = mongoose.model("Book", BookSchema)
