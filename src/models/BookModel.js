@@ -11,18 +11,14 @@ const BookSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    authors: [
-        {
-        type: String,
+    authors: {
+        type: [String],
         required: true,
         trim: true
         },
-    ],
-    genre: [
-        {
-        type: String,
+    genre: {
+        type: [String],
         },
-    ],
     description: {
         type: String,
     },
@@ -33,7 +29,7 @@ const BookSchema = new mongoose.Schema({
         type: String,
         name: String,
         // required: true,
-        unique: true
+        // unique: true
     },
     rating: {
         type: Number,
