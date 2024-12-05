@@ -32,7 +32,7 @@ const BookSchema = new mongoose.Schema({
     coverImage: {
         type: String,
         name: String,
-        required: true,
+        // required: true,
         unique: true
     },
     rating: {
