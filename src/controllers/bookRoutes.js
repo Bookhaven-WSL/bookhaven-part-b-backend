@@ -4,7 +4,7 @@ const router = express.Router()
 
 
 router.post("/test-book", async (request, response) => {
-    let id = "testExternalId"
+    let libraryId = "testExternalId"
     let title = request.body.title
     let authors = request.body.authors
     let genre = request.body.genre
@@ -12,11 +12,11 @@ router.post("/test-book", async (request, response) => {
     let publishedDate = Date.now
     let rating = request.body.rating
 
-    let testBook = await Book.create({ id: id, title: title, authors: authors, genre: genre, description: description, publishedDate: publishedDate, rating: rating})
+    let testBook = await Book.create({ libraryId: libraryId, title: title, authors: authors, genre: genre, description: description, publishedDate: publishedDate, rating: rating})
 
     response.json({
         book: {
-            id: testBook.id,
+            libraryId: testBook.id,
             title: testBook.title,
             authors: testBook.authors,
             genre: testBook.genre,

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 
 const BookSchema = new mongoose.Schema({
-    id: {
+    libraryId: {
         type: String,
         required: true,
         unique: true
