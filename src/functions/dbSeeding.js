@@ -1,10 +1,10 @@
 const { createBook } = require("./crud/BookCrud");
 const { dbConnection, dbDisconnection } = require("./DBFunctions");
 
+require("dotenv").config();
+
 
 async function seedBook() {
-
-    await dbConnection()
 
     let key = "OL24574391W";
     
@@ -14,7 +14,7 @@ async function seedBook() {
         "Фёдор Михайлович Достоевский",
         ["Crime", "Fiction"],
         "1866",
-        "key-M",
+        `${key}-M`,
         5,
     );
     console.log("Book has been seeded, disconnecting from database");

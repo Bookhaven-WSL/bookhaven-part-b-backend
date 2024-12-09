@@ -7,7 +7,7 @@
     "dev": "nodemon src/ServerBoot.js",
     "start": "node src/ServerBoot.js",
     "seed": "node src/functions/dbSeeding.js",
-    "start:seed": "npm run start && npm run seed"
+    "start:seed": "npm run seed && npm run start"
   },
   "keywords": [],
   "author": "",
