@@ -6,9 +6,9 @@ async function seedBook() {
 
     await dbConnection()
 
-    let key = OL24574391W;
+    let key = "OL24574391W";
     
-    await createBook (
+    await createBook(
         key, 
         "Crime and Punishment", 
         "Фёдор Михайлович Достоевский",
@@ -16,7 +16,7 @@ async function seedBook() {
         "1866",
         "key-M",
         5,
-    )
+    );
     console.log("Book has been seeded, disconnecting from database");
     await dbDisconnection();
 
