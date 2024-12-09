@@ -33,6 +33,11 @@ const BookSchema = new mongoose.Schema({
     },
     rating: {
         type: Number,
+    },
+    shelf: {
+        type: String,
+        enum: ['toBeRead', 'read', 'recommended'],
+        default: 'toBeRead',
     }
 })
 
