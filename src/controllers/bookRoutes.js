@@ -1,28 +1,29 @@
 const express = require("express")
-const { Book } = require("../models/BookModel")
+const { BookModel } = require("../models/BookModel")
 const router = express.Router()
 
 
 router.post("/test-book", async (request, response) => {
-    let libraryId = "testExternalId"
+    let key = "testExternalId"
     let title = request.body.title
     let authors = request.body.authors
     let genre = request.body.genre
-    let description = request.body.description
-    let publishedDate = Date.now
+    let publishYear = Date.now
     let rating = request.body.rating
+    let shelf = shelf
 
-    let testBook = await Book.create({ libraryId: libraryId, title: title, authors: authors, genre: genre, description: description, publishedDate: publishedDate, rating: rating})
+    let testBook = await BookModel.create({ key: key, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf, shelf})
 
     response.json({
         book: {
-            libraryId: testBook.id,
+            key: testBook.id,
             title: testBook.title,
             authors: testBook.authors,
             genre: testBook.genre,
-            description: testBook.description,
-            publishedDate: publishedDate,
-            rating: testBook.rating
+            publishYear: publishYear,
+            rating: testBook.rating,
+            shelf: shelf
+
         }
     })
 })
