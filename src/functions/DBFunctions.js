@@ -13,7 +13,7 @@ async function dbDisconnection() {
 
 async function dbDrop () {
     await mongoose.connection.db.dropDatabase();
-    console.log("Oops, I just dropped the database")
+    console.log("Oops, I just dropped the database");
 };
 module.exports = {
     dbConnection,
