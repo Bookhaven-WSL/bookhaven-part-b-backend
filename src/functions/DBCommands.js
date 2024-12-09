@@ -6,9 +6,9 @@ async function seedBook() {
 
     await dbConnection()
 
-    let key = OL24574391W
+    let key = OL24574391W;
     
-    let newBook = await createBook (
+    await createBook (
         key, 
         "Crime and Punishment", 
         "Фёдор Михайлович Достоевский",
