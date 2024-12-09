@@ -6,6 +6,15 @@ async function dbConnection() {
     console.log("Connected to database at " + databaseURL)
 }
 
+async function dbDisconnection() {
+    await mongoose.connection.close();
+};
+
+async function dbDrop () {
+    await mongoose.connection.db.dropDatabase();
+};
 module.exports = {
-    dbConnection
+    dbConnection,
+    dbDisconnection,
+    dbDrop
 }
