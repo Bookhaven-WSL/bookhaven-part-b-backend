@@ -18,9 +18,12 @@ async function getApiData (title) {
             let title = book.title
             let author = book.author_name
             let genres = book.subject
-            let publishDate = book.first_publish_year
+            let publishYear = book.first_publish_year
 
-            body.push([{"Key": key}, {"Title": title}, {"Author": author}, {"Genres": genres}, {"Published Date": publishDate}])
+            let imgKey = key.slice(7)
+            let imgURL = `https://covers.openlibrary.org/w/olid/${imgKey}-M.jpg`
+
+            body.push([{"Key": key}, {"Title": title}, {"Author": author}, {"Genres": genres}, {"Published Year": publishYear}, {"Image URL": imgURL}])
         }
 
         return body
