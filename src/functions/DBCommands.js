@@ -1,9 +1,28 @@
 const { createBook } = require("./crud/BookCrud");
-const { dbConnection, dbDiscnnection } = require("./DBFunctions");
+const { dbConnection, dbDisconnection } = require("./DBFunctions");
 
 
-async function seed() {
+async function seedBook() {
+
+    await dbConnection()
+
+    let key = OL24574391W
     
     let newBook = await createBook (
-        "/books/OL37239326M", "Crime and Punishment", "Фёдор Михайлович Достоевский")
+        key, 
+        "Crime and Punishment", 
+        "Фёдор Михайлович Достоевский",
+        ["Crime", "Fiction"],
+        "1866",
+        "key-M",
+        5,
+    )
+    console.log("Book has been seeded, disconnecting from database");
+    await dbDisconnection();
+
 }
+
+dbConnection().then(() => {
+    console.log("Connected to database, seeding Book now!");
+    seedBook();
+});
