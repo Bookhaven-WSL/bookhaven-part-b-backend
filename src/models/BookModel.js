@@ -22,7 +22,7 @@ const BookSchema = new mongoose.Schema({
     // description: {
     //     type: String,
     // },
-    publishedDate: {
+    publishYear: {
         type: String
     },
     coverImage: {
