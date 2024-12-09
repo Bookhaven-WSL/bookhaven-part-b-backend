@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 
 const BookSchema = new mongoose.Schema({
-    libraryId: {
+    key: {
         type: String,
         required: true,
         unique: true
@@ -19,9 +19,9 @@ const BookSchema = new mongoose.Schema({
     genre: {
         type: [String],
         },
-    description: {
-        type: String,
-    },
+    // description: {
+    //     type: String,
+    // },
     publishedDate: {
         type: String
     },
@@ -33,7 +33,7 @@ const BookSchema = new mongoose.Schema({
     },
     rating: {
         type: Number,
-    }
+    },
 })
 
 const Book = mongoose.model("Book", BookSchema)
