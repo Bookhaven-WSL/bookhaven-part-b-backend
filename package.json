@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/ServerBoot.js",
-    "start": "node src/ServerBoot.js"
+    "start": "node src/ServerBoot.js",
+    "seed": "node src/functions/DBCommands.js",
+    "start:seed": "npm run start && npm run seed"
   },
   "keywords": [],
   "author": "",
