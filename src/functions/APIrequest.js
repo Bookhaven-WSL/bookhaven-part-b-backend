@@ -14,16 +14,16 @@ async function getApiData (title) {
 
         let body = []
         for (let book of smallBody) {
-            let key = book.key
+            let olid = book.olid
             let title = book.title
             let author = book.author_name
             let genres = book.subject
             let publishYear = book.first_publish_year
 
-            let imgKey = key.slice(7)
-            let imgURL = `https://covers.openlibrary.org/w/olid/${imgKey}-M.jpg`
+            let imgOlid = olid.slice(7)
+            let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
-            body.push([{"Key": key}, {"Title": title}, {"Author": author}, {"Genres": genres}, {"Published Year": publishYear}, {"Image URL": imgURL}])
+            body.push([{"Olid": olid}, {"Title": title}, {"Author": author}, {"Genres": genres}, {"Published Year": publishYear}, {"Image URL": imgURL}])
         }
 
         return body
