@@ -8,6 +8,7 @@ const cors = require("cors")
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
+const { getApiData } = require("./functions/APIrequest.js")
 const { UserAuthValidation } = require("./functions/JWTFunctions.js")
 const AuthControllerRoutes = require("./controllers/User/AuthControllerRoutes.js")
 const bookController = require("./controllers/bookRoutes.js")
@@ -29,9 +30,10 @@ app.get("/", (request, response) => {
     })
 })
 
-app.get("/testRoute", UserAuthValidation, (request, response) => {
+app.get("/testRoute", UserAuthValidation, async (request, response) => {
+    const APIresult = await getApiData("The Lord of The Rings")
     response.json({
-        message: "Hello, you can view this test route because you are signed in!"
+        response: APIresult
     })
 })
 
