@@ -19,6 +19,10 @@ const UserSchema = new mongoose.Schema({
         required: true,
         minLength: 5,
     },
+    isChild: {
+        type: Boolean,
+        default: false
+    },
     bookshelves: {
         read: [
             {

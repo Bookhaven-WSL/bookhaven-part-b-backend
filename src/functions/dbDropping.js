@@ -12,6 +12,8 @@ async function drop() {
     await dbDisconnection();
 }
 
+   
+
 dbConnection().then(() => {
     console.log("Connected to database and about to drop");
     drop()

@@ -8,7 +8,6 @@ require("dotenv").config();
 
 async function seed() {
 
-
     await createUser("test1@email.com", "Test1", "test1password")
     
     await createBook(
@@ -17,7 +16,7 @@ async function seed() {
         "test-author",
         ["Crime", "Fiction"],
         "1866",
-        `${test-olid}-M`,
+        "test-olid-M",
         5,
     );
     console.log("Book has been seeded, disconnecting from database");
