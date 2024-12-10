@@ -23,9 +23,8 @@ async function getApiData (title) {
             let imgOlid = olid.slice(7)
             let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
-            body.push([{"Olid": olid}, {"Title": title}, {"Author": author}, {"Genres": genres}, {"Published Year": publishYear}, {"Image URL": imgURL}])
+            body.push([{"Open Library id": olid}, {"Title": title}, {"Author": authors}, {"Genres": genre}, {"Published Year": publishYear}, {"Image URL": imgURL}])
         }
-
         return body
     }
     else {
