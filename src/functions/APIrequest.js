@@ -16,8 +16,8 @@ async function getApiData (title) {
         for (let book of smallBody) {
             let olid = book.olid
             let title = book.title
-            let author = book.author_name
-            let genres = book.subject
+            let authors = book.author_name
+            let genre = book.subject
             let publishYear = book.first_publish_year
 
             let imgOlid = olid.slice(7)

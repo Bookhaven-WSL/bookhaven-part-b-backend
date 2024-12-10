@@ -15,7 +15,33 @@ async function createBook (olid, title, authors, genre, publishYear, coverImage,
     return newBook;
 }
 
+async function findOneBook() {
 
+}
+
+
+async function findManyBooks() {
+
+}
+
+
+async function updateOneBook() {
+
+}
+
+async function deleteManyBooks() {
+    
+}
+
+
+async function deleteOneBook() {
+
+}
+
+
+async function deleteManyBooks() {
+
+}
 module.exports = {
     createBook,
 
