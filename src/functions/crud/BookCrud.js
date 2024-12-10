@@ -1,9 +1,9 @@
 
 const { BookModel } = require("../../models/BookModel")
 
-async function createBook (key, title, authors, genre, publishYear, coverImage, rating, shelf) {
-    let result = await BookModel.create({
-        key: key,
+async function createBook (olid, title, authors, genre, publishYear, coverImage, rating, shelf) {
+    let newBook = await BookModel.create({
+        olid: olid,
         title: title,
         authors: authors,
         genre: genre,
@@ -12,7 +12,7 @@ async function createBook (key, title, authors, genre, publishYear, coverImage, 
         rating: rating,
         shelf: shelf
     });
-    return result;
+    return newBook;
 }
 
 
