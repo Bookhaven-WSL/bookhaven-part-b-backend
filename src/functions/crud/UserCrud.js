@@ -13,7 +13,7 @@ async function createUser(email, username, password, isChild) {
 }
 
 async function findOneUser() {
-    let singleUser = await UserModel.findOne(query).populate("title");
+    let singleUser = await UserModel.findOne(query).populate("email");
 
     return singleUser;
 }
