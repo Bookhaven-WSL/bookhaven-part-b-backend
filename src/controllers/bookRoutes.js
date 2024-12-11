@@ -4,15 +4,15 @@ const router = express.Router()
 
 
 router.post("/test-book", async (request, response) => {
-    let olid = "testExternalId"
+    let olid = request.body.olid
     let title = request.body.title
     let authors = request.body.authors
     let genre = request.body.genre
-    let publishYear = Date.now
+    let publishYear = request.body.publishYear
     let rating = request.body.rating
     let shelf = shelf
 
-    let testBook = await BookModel.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf, shelf})
+    let testBook = await BookModel.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf: shelf})
 
     response.json({
         book: {
