@@ -12,6 +12,20 @@ async function createUser(email, username, password, isChild) {
     return newUser;
 }
 
+async function findOneUser() {
+    let singleUser = await UserModel.findOne(query).populate("title");
+
+    return singleUser;
+}
+
+
+async function findManyUsers() {
+    let multipleUsers= await UserModel.find(query);
+
+    return multipleUsers;
+}
+
 module.exports = {
     createUser,
+    findOneUser, findManyUsers,
 }
