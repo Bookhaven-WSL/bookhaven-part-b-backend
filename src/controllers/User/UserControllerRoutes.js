@@ -40,4 +40,40 @@ router.patch("/update", async (request, response) => {
     })
 })
 
+router.delete("/delete", async (request, response) => {
+    let email = request.body.email
+    let password = request.body.password
+
+    if (!email || !password) {
+        response.status(400).json({
+            message: "Sorry, looks like you are missing username or password details."
+        })
+        return
+    }
+
+    let userCheck = await User.findOne({email: email}).exec()
+
+    if (userCheck === null) {
+        response.status(400).json({
+            message: "Sorry, it appears that email is not registered."
+        })
+        return
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, userCheck.password)
+
+    if (!isPasswordValid) {
+        response.status(400).json({
+            message: "Incorrect password provided."
+        })
+        return
+    }
+
+    let deletedUser = await User.deleteOne({email: email}).exec()
+
+    response.json({
+        message: `Thank you for your time with us ${deletedUser.username}. Your account has been deleted.`
+    })
+})
+
 module.exports = router
