@@ -106,6 +106,16 @@ router.get ("/books/to-be-read", async (request, respond) => {
 
 })
 
+router.get ("/books/read", async (request, respond) => {
+
+
+})
+
+router.get ("/books/recommended", async (request, respond) => {
+
+
+})
+
 
 
 module.exports = router
