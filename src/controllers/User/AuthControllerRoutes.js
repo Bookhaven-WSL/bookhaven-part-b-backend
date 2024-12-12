@@ -1,83 +1,96 @@
 const express = require("express")
 const bcrypt = require("bcrypt")
-const { User } = require("../../models/UserModel")
+const { UserModel } = require("../../models/UserModel")
 const { generateJWT } = require("../../functions/JWTFunctions")
 const router = express.Router()
 
 router.post("/signup", async (request, response) => {
-    let username = request.body.username
-    let email = request.body.email
-    let password = request.body.password
+    try {
+        let username = request.body.username
+        let email = request.body.email
+        let password = request.body.password
 
-    if (!username || !email || !password) {
-        response.status(400).json({
-            message: "Sorry, looks like you are missing username or password details."
-        })
-        return
-    }
-
-    let userCheck = await User.findOne({email: email}).exec()
-
-    if (userCheck) {
-        response.status(400).json({
-            message: "Sorry, it appears that email is already registered."
-        })
-        return
-    }
-
-    const salt = bcrypt.genSaltSync(10)
-    const hash = await bcrypt.hash(password, salt)
-
-    let newUser = await User.create({username: username, email: email, password: hash})
-
-    let newJWT = generateJWT(newUser.id, newUser.username, newUser.email)
-
-    response.json({
-        jwt: newJWT,
-        user: {
-            id: newUser.id,
-            username: newUser.username,
-            email: newUser.email
+        if (!username || !email || !password) {
+            response.status(400).json({
+                message: "Sorry, looks like you are missing username or password details."
+            })
+            return
         }
-    })
+
+        let userCheck = await UserModel.exists({email: email})
+
+        if (userCheck) {
+            response.status(400).json({
+                message: "Sorry, it appears that email is already registered."
+            })
+            return
+        }
+
+        const salt = bcrypt.genSaltSync(10)
+        const hash = await bcrypt.hash(password, salt)
+
+        let newUser = await UserModel.create({username: username, email: email, password: hash})
+
+        let newJWT = generateJWT(newUser.id, newUser.username, newUser.email)
+
+        response.json({
+            jwt: newJWT,
+            user: {
+                id: newUser.id,
+                username: newUser.username,
+                email: newUser.email
+            }
+        })
+    }
+    catch (error) {
+        response.json({
+            message: error.message
+        })
+    }
 })
 
 router.post("/login", async (request, response) => {
-    let email = request.body.email
-    let password = request.body.password
+    try {
+        let email = request.body.email
+        let password = request.body.password
 
-    if (!email || !password) {
-        response.status(400).json({
-            message: "Sorry, looks like you are missing username or password details."
+        if (!email || !password) {
+            response.status(400).json({
+                message: "Sorry, looks like you are missing username or password details."
+            })
+            return
+        }
+
+        let userCheck = await UserModel.findOne({email: email})
+
+        if (userCheck === null) {
+            response.status(400).json({
+                message: "Sorry, it appears that email is not registered."
+            })
+            return
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, userCheck.password)
+
+        if (!isPasswordValid) {
+            response.status(400).json({
+                message: "Incorrect password provided."
+            })
+            return
+        }
+
+        let newJWT = generateJWT(userCheck.id, userCheck.username, userCheck.email)
+
+        response.json({
+            jwt: newJWT,
+            message: ` Welcome back ${userCheck.username}!`
         })
-        return
     }
-
-    let userCheck = await User.findOne({email: email}).exec()
-
-    if (userCheck === null) {
-        response.status(400).json({
-            message: "Sorry, it appears that email is not registered."
+    catch (error) {
+        response.json({
+            message: error.message
         })
-        return
     }
-
-    const isPasswordValid = await bcrypt.compare(password, userCheck.password)
-
-    if (!isPasswordValid) {
-        response.status(400).json({
-            message: "Incorrect password provided."
-        })
-        return
-    }
-
-    let newJWT = generateJWT(userCheck.id, userCheck.username, userCheck.email)
-
-    response.json({
-        jwt: newJWT,
-        message: ` Welcome back ${userCheck.username}!`
-    })
-
 })
 
 module.exports = router
