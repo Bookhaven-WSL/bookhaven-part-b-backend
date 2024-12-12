@@ -18,7 +18,6 @@ async function findOneUser() {
     return singleUser;
 }
 
-
 async function findManyUsers() {
     let multipleUsers= await User.find(query);
 
