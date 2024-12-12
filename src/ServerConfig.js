@@ -8,7 +8,7 @@ const cors = require("cors")
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-const { getApiData } = require("./functions/APIrequest.js")
+const { getMultipleApiEntries, getSingleApiEntry } = require("./functions/APIrequest.js")
 const { UserAuthValidation } = require("./functions/JWTFunctions.js")
 const AuthControllerRoutes = require("./controllers/User/AuthControllerRoutes.js")
 const bookController = require("./controllers/bookRoutes.js")
@@ -32,7 +32,8 @@ app.get("/", (request, response) => {
 })
 
 app.get("/testRoute", UserAuthValidation, async (request, response) => {
-    const APIresult = await getApiData("The Lord of The Rings")
+    //const APIresult = await getMultipleApiEntries("The Lord of The Rings")
+    const APIresult = await getSingleApiEntry("OL27448W")
     response.json({
         response: APIresult
     })
