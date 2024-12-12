@@ -11,7 +11,7 @@ app.use(express.urlencoded({extended: true}))
 const { getApiData } = require("./functions/APIrequest.js")
 const { UserAuthValidation } = require("./functions/JWTFunctions.js")
 const AuthControllerRoutes = require("./controllers/User/AuthControllerRoutes.js")
-const BookController = require("./controllers/Book/bookRoutes.js")
+const BookController = require("./controllers/Book/BookControllerRoutes.js.js")
 const UserControllerRoutes = require("./controllers/User/UserControllerRoutes.js")
 
 let corsURLs = {
