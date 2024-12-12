@@ -121,15 +121,42 @@ router.get ("/search", async (request, response) => {
 
 })
 
-// router.get ("/books/read", async (request, response) => {
+router.get ("/to-be-read", async (request, response) => {
+    try{ 
+        let books = await Book.find({shelf:"toBeRead"});
 
+        response.json({ books })
+    } catch (error) {
+        response.status(500).json({
+            message: error.message
+        })
+    }
+})
 
-// })
+router.get ("/read", async (request, response) => {
+    try{ 
+        let books = await Book.find({shelf:"read"});
 
-// router.get ("/books/recommended", async (request, response) => {
+        response.json({ books })
+    } catch (error) {
+        response.status(500).json({
+            message: error.message
+        })
+    }
+})
 
+router.get ("/recommended", async (request, response) => {
+    try{ 
+        let books = await Book.find({shelf:"recommended"});
 
-// })
+        response.json({ books })
+    } catch (error) {
+        response.status(500).json({
+            message: error.message
+        })
+    }
+
+})
 
 
 router.patch("/update", async (request, response) => {
