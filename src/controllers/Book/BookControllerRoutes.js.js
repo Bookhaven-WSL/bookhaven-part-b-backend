@@ -4,7 +4,7 @@ const { getSingleApiEntry, getMultipleApiEntries } = require("../../functions/AP
 const router = express.Router()
 
 
-router.post("/books", async (request, response) => {
+router.post("/", async (request, response) => {
     try {
         let olid = request.body.olid
         let title = request.body.title
@@ -53,7 +53,7 @@ router.post("/books", async (request, response) => {
     }
 })
 
-router.post ("/books/to-be-read", async (request, response) => {
+router.post ("/to-be-read", async (request, response) => {
     try {
         const result = await getSingleApiEntry() 
 
@@ -69,7 +69,7 @@ router.post ("/books/to-be-read", async (request, response) => {
     }
 })
 
-router.post ("/books/read", async (request, response) => {
+router.post ("/read", async (request, response) => {
     try {
         const result = await getSingleApiEntry() 
 
@@ -85,7 +85,7 @@ router.post ("/books/read", async (request, response) => {
     }
 })
 
-router.post ("/books/recommended", async (request, response) => {
+router.post ("/recommended", async (request, response) => {
     try {
         const result = await getMultipleApiEntries() 
 
@@ -101,20 +101,105 @@ router.post ("/books/recommended", async (request, response) => {
     }
 })
 
-router.get ("/books/to-be-read", async (request, respond) => {
+router.get ("/search", async (request, response) => {
 
+    let title = request.body.title
+    let authors = request.body.authors
+    let genre = request.body.genre
+    let publishYear = request.body.publishYear
+    
+    let result = await Book.findOne({title: title, authors: authors, genre: genre, publishYear: publishYear})
+
+    if (!result) {
+        response.status(400).json({
+            message: "Sorry, it appears that book is not in your shelf."
+        })
+        return
+    }
+
+    response.json
 
 })
 
-router.get ("/books/read", async (request, respond) => {
+// router.get ("/books/read", async (request, response) => {
 
+
+// })
+
+// router.get ("/books/recommended", async (request, response) => {
+
+
+// })
+
+
+router.patch("/update", async (request, response) => {
+    try {
+        let title = request.body.title
+        let authors = request.body.authors
+        let newRating = request.body.rating
+        let newShelf = request.body.shelf
+       
+        if (!newRating || !newShelf) {
+            response.status(400).json({
+                message: "Please enter details to update books rating or shelf location."
+            })
+            return
+        }
+
+        let bookCheck = await Book.findOne({title: title, authors: authors}).exec()
+
+        if (bookCheck === null) {
+            response.status(400).json({
+                message: "Sorry, it appears that book is not in your shelf."
+            })
+            return
+        }
+
+        let updatedBook = await Book.findOneAndUpdate({title: title}, {rating: newRating, shelf: newShelf})
+
+        response.status(201).json({
+            success: true,
+            message: `${book.title} has been updated`,
+            data: updatedBook
+        })
+    }
+    catch (error) {
+        response.status(501).json({
+            message: error.message
+        })
+    }
+})
+
+
+router.delete("/", async (request, response) => {
+    try{
+
+        let title = request.body.title
+        let authors = request.body.authors
+        
+        let result = await Book.findOne({title: title, authors: authors})
+
+        if (result === null) {
+        response.status(400).json({
+            message: "Sorry, it appears that book is not in your shelf"
+            })
+        return
+        }
+
+        let book = await Book.deleteOne({title: title})
+
+        response.status(200).json ({
+            message: `${book.title} has been removed from bookshelf.`
+        })
+    } catch (error) {
+        return response.json({
+            message: error.message
+        })
+    }
+    
 
 })
 
-router.get ("/books/recommended", async (request, respond) => {
-
-
-})
 
 
 
