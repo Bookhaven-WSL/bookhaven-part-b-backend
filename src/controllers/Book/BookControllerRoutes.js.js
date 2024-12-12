@@ -3,8 +3,8 @@ const { Book } = require("../../models/BookModel")
 const router = express.Router()
 
 
-router.post("/test-book", async (request, response) => {
-    let olid = request.body.olid
+router.post("/book", async (request, response) => {
+    let olid = olid
     let title = request.body.title
     let authors = request.body.authors
     let genre = request.body.genre
@@ -12,16 +12,18 @@ router.post("/test-book", async (request, response) => {
     let rating = request.body.rating
     let shelf = shelf
 
-    let testBook = await Book.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf: shelf})
+    let newBook = await Book.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf: shelf})
+
+
 
     response.json({
         book: {
-            olid: testBook.id,
-            title: testBook.title,
-            authors: testBook.authors,
-            genre: testBook.genre,
+            olid: newBook.olid,
+            title: newBook.title,
+            authors: newBook.authors,
+            genre: newBook.genre,
             publishYear: publishYear,
-            rating: testBook.rating,
+            rating: newBook.rating,
             shelf: shelf
 
         }
