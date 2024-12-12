@@ -1,6 +1,6 @@
 const express = require("express")
 const bcrypt = require("bcrypt")
-const { UserModel } = require("../../models/UserModel")
+const { User } = require("../../models/UserModel")
 const { generateJWT } = require("../../functions/JWTFunctions")
 const router = express.Router()
 
@@ -17,7 +17,7 @@ router.post("/signup", async (request, response) => {
             return
         }
 
-        let userCheck = await UserModel.exists({email: email})
+        let userCheck = await User.exists({email: email})
 
         if (userCheck) {
             response.status(400).json({
@@ -29,7 +29,7 @@ router.post("/signup", async (request, response) => {
         const salt = bcrypt.genSaltSync(10)
         const hash = await bcrypt.hash(password, salt)
 
-        let newUser = await UserModel.create({username: username, email: email, password: hash})
+        let newUser = await User.create({username: username, email: email, password: hash})
 
         let newJWT = generateJWT(newUser.id, newUser.username, newUser.email)
 
@@ -61,7 +61,7 @@ router.post("/login", async (request, response) => {
             return
         }
 
-        let userCheck = await UserModel.findOne({email: email})
+        let userCheck = await User.findOne({email: email})
 
         if (userCheck === null) {
             response.status(400).json({
