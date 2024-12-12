@@ -1,5 +1,5 @@
 const express = require("express")
-const { BookModel } = require("../models/BookModel")
+const { Book } = require("../models/BookModel")
 const router = express.Router()
 
 
@@ -12,7 +12,7 @@ router.post("/test-book", async (request, response) => {
     let rating = request.body.rating
     let shelf = shelf
 
-    let testBook = await BookModel.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf: shelf})
+    let testBook = await Book.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf: shelf})
 
     response.json({
         book: {

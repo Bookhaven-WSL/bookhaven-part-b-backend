@@ -1,8 +1,8 @@
 
-const { UserModel } = require("../../models/UserModel");
+const { User } = require("../../models/UserModel");
 
 async function createUser(email, username, password, isChild) {
-    let newUser = UserModel.create({
+    let newUser = User.create({
         email: email,
         username: username,
         password: password,
@@ -13,14 +13,14 @@ async function createUser(email, username, password, isChild) {
 }
 
 async function findOneUser() {
-    let singleUser = await UserModel.findOne(query).populate("email");
+    let singleUser = await User.findOne(query).populate("email");
 
     return singleUser;
 }
 
 
 async function findManyUsers() {
-    let multipleUsers= await UserModel.find(query);
+    let multipleUsers= await User.find(query);
 
     return multipleUsers;
 }
