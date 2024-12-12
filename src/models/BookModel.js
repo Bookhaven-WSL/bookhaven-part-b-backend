@@ -15,21 +15,16 @@ const BookSchema = new mongoose.Schema({
         type: [String],
         required: true,
         trim: true
-        },
+    },
     genre: {
         type: [String],
-        },
-    // description: {
-    //     type: String,
-    // },
+    },
     publishYear: {
         type: String
     },
     coverImage: {
         type: String,
         name: String,
-        // required: true,
-        // unique: true
     },
     rating: {
         type: Number,
