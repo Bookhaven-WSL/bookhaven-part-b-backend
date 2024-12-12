@@ -12,6 +12,7 @@ const { getApiData } = require("./functions/APIrequest.js")
 const { UserAuthValidation } = require("./functions/JWTFunctions.js")
 const AuthControllerRoutes = require("./controllers/User/AuthControllerRoutes.js")
 const bookController = require("./controllers/bookRoutes.js")
+const UserControllerRoutes = require("./controllers/User/UserControllerRoutes.js")
 
 let corsURLs = {
     origin: ["http://localhost:8080", "https://bookhaven-part-b-backend.onrender.com/"],
@@ -40,5 +41,7 @@ app.get("/testRoute", UserAuthValidation, async (request, response) => {
 app.use("/auth", AuthControllerRoutes)
 
 app.use("/", bookController)
+
+app.use("/user", UserControllerRoutes)
 
 module.exports = {app}
