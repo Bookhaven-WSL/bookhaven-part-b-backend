@@ -216,7 +216,7 @@ router.delete("/", async (request, response) => {
         let book = await Book.deleteOne({title: title})
 
         response.status(200).json ({
-            message: `${book.title} has been removed from bookshelf.`
+            message: /*`${book.title} shows up as undefined*/ `Book has been removed from bookshelf.`
         })
     } catch (error) {
         return response.json({

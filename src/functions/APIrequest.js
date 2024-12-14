@@ -1,4 +1,4 @@
-async function getMultipleApiEntries (title) {
+async function getMultipleApiEntriesTitle (title) {
     try {
 
         let formattedTitle = title.trim().toLowerCase().replace(/ /g, '+')
@@ -24,7 +24,58 @@ async function getMultipleApiEntries (title) {
                 let imgOlid = key.slice(7)
                 let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
-                body.push([{"Open Library id": key}, {"Title": title}, {"Author": authors}, {"Genres": genre}, {"Published Year": publishYear}, {"Image URL": imgURL}])
+                body.push([{"olid": key}, {"title": title}, {"Author": authors}, {"Genres": genre}, {"Published Year": publishYear}, {"Image URL": imgURL}])
+            }
+            return body
+        }
+        else {
+            if (response.status == "404") {
+                const body = {"error": "Oh dear, we couldn't find any books matching this name! Try again."}
+                return body
+            }
+            else if (response.status == "429") {
+                const body = {"error": "Unfortunately the API this service relies on has been requested too frequently in a short period of time. Please wait for more results."}
+                return body
+            }
+            else {
+                const body = {"error": "An unexpected error occured."}
+                console.log(response.status)
+                return body
+            }
+        }
+    }
+    catch (error) {
+        return error.message
+    }
+}
+
+async function getMultipleApiEntriesGenre (genre) {
+    try {
+
+        let formattedGenre = genre.trim().toLowerCase().replace(/ /g, '+')
+
+        const response = await fetch(`https://openlibrary.org/search.json?subject=${formattedGenre}`, {
+            methods: "GET"
+        })
+        if (response.ok) {
+            let largeBody = await response.json()
+            let smallBody = []
+            for (let i = 0; i < 20; i ++) {
+                smallBody.push(largeBody.docs[i])
+            }
+
+            let body = []
+            for (let book of smallBody) {
+                let key = book.key
+                let title = book.title
+                let authors = book.author_name
+                let genre = book.subject
+                let publishYear = book.first_publish_year
+
+                let imgOlid = key.slice(7)
+                let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
+
+                body.push([{"olid": key}, {"title": title}, {"Author": authors}, {"Genres": genre}, {"Published Year": publishYear}, {"Image URL": imgURL}])
             }
             return body
         }
@@ -70,7 +121,7 @@ async function getSingleApiEntry (formattedKey) {
             let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
             let body = []
-            body.push([{"Open Library id": key}, {"Title": title}, {"Author": authors}, {"Genres": genre}, {"Published Year": publishYear}, {"Image URL": imgURL}])
+            body.push([{"olid": key}, {"title": title}, {"Author": authors}, {"Genres": genre}, {"Published Year": publishYear}, {"Image URL": imgURL}])
 
             return body
         }
@@ -96,6 +147,7 @@ async function getSingleApiEntry (formattedKey) {
 }
 
 module.exports = {
-    getMultipleApiEntries,
+    getMultipleApiEntriesTitle,
+    getMultipleApiEntriesGenre,
     getSingleApiEntry
 }

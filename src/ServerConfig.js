@@ -8,7 +8,7 @@ const cors = require("cors")
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-const { getMultipleApiEntries, getSingleApiEntry } = require("./functions/APIrequest.js")
+const { getMultipleApiEntriesTitle, getMultipleApiEntriesGenre, getSingleApiEntry } = require("./functions/APIrequest.js")
 const { UserAuthValidation } = require("./functions/JWTFunctions.js")
 const AuthControllerRoutes = require("./controllers/User/AuthControllerRoutes.js")
 const BookController = require("./controllers/Book/BookControllerRoutes.js.js")
@@ -32,8 +32,9 @@ app.get("/", (request, response) => {
 })
 
 app.get("/testRoute", UserAuthValidation, async (request, response) => {
-    //const APIresult = await getMultipleApiEntries("The Lord of The Rings")
-    const APIresult = await getSingleApiEntry("OL27448W")
+    //const APIresult = await getMultipleApiEntriesTitle("The Lord of The Rings")
+    //const APIresult = await getSingleApiEntry("OL27448W")
+    const APIresult = await getMultipleApiEntriesGenre("Fiction")
     response.json({
         response: APIresult
     })
@@ -41,7 +42,7 @@ app.get("/testRoute", UserAuthValidation, async (request, response) => {
 
 app.use("/auth", AuthControllerRoutes)
 
-app.use("/", BookController)
+app.use("/book", BookController)
 
 app.use("/user", UserControllerRoutes)
 
