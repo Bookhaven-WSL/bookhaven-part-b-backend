@@ -92,80 +92,100 @@ router.post ("/read", async (request, response) => {
 
 router.post ("/recommended", async (request, response) => {
     try {
-        const result = await getMultipleApiEntries() 
 
-        const recBooks = await Book.create({result})
-    
+        let genre = request.body.genre
+
+        const result = await getMultipleApiEntriesGenre(genre)
+
+        for (let books of result) {
+            await Book.create({ olid: books[0].olid, title: books[1].title, authors: books[2].authors, genre: books[3].genres, publishYear: books[4].publishYear, coverImage: books[5].coverImage, shelf: "recommended"})
+        }
+
         return response.status(201).json ({
             success: true,
-            data: recBooks
+            message: "Recommended books successfully added to database!"
         })
     } catch (error) {
         console.error("Error adding books", error);
-        return response.status(501).json(error)
+        return response.status(501).json(error.message)
     }
 })
 
-router.get ("/search", async (request, response) => {
+router.post ("/search", async (request, response) => {
+    try {
 
-    let title = request.body.title
-    let authors = request.body.authors
-    
-    let result = await Book.findOne({title: title, authors: authors})
+        let title = request.body.title
+        let shelf = request.body.shelf
+        
+        let result = await Book.findOne({title: title, shelf: shelf})
 
-    if (!result) {
-        response.status(400).json({
-            message: "Sorry, it appears that book is not in your shelf."
+        if (!result) {
+            response.status(400).json({
+                message: "Sorry, it appears that book is not in your shelf."
+            })
+            return
+        }
+
+        return response.json({
+            book: result
         })
-        return
     }
-
-    response.json
-
+    catch (error) {
+        console.error("Error finding book", error);
+        return response.status(501).json(error.message)
+    }
 })
 
 router.get ("/to-be-read", async (request, response) => {
-    try{ 
+    try { 
+
         let books = await Book.find({shelf:"toBeRead"});
 
-        response.json({ books })
-    } catch (error) {
-        response.status(500).json({
+        return response.json({ 
+            books
+        })
+    }
+    catch (error) {
+        return response.status(500).json({
             message: error.message
         })
     }
 })
 
 router.get ("/read", async (request, response) => {
-    try{ 
+    try { 
+
         let books = await Book.find({shelf:"read"});
 
-        response.json({ books })
-    } catch (error) {
-        response.status(500).json({
+        return response.json({ 
+            books
+        })
+    }
+    catch (error) {
+        return response.status(500).json({
             message: error.message
         })
     }
 })
 
 router.get ("/recommended", async (request, response) => {
-    try{ 
+    try { 
         let books = await Book.find({shelf:"recommended"});
 
-        response.json({ books })
-    } catch (error) {
-        response.status(500).json({
+        return response.json({ 
+            books
+        })
+    }
+    catch (error) {
+        return response.status(500).json({
             message: error.message
         })
     }
-
 })
-
 
 router.patch("/update", async (request, response) => {
     try {
         let title = request.body.title
-        let authors = request.body.authors
         let newRating = request.body.rating
         let newShelf = request.body.shelf
        
@@ -176,7 +196,7 @@ router.patch("/update", async (request, response) => {
             return
         }
 
-        let bookCheck = await Book.findOne({title: title, authors: authors}).exec()
+        let bookCheck = await Book.findOne({title: title})
 
         if (bookCheck === null) {
             response.status(400).json({
@@ -187,10 +207,9 @@ router.patch("/update", async (request, response) => {
 
         let updatedBook = await Book.findOneAndUpdate({title: title}, {rating: newRating, shelf: newShelf})
 
-        response.status(201).json({
+        response.json({
             success: true,
-            message: `${book.title} has been updated`,
-            data: updatedBook
+            message: `${updatedBook.title} has been updated`
         })
     }
     catch (error) {
@@ -219,15 +238,14 @@ router.delete("/", async (request, response) => {
         let book = await Book.deleteOne({title: title})
 
         response.status(200).json ({
-            message: /*`${book.title} shows up as undefined*/ `Book has been removed from bookshelf.`
+            message: `Book has been removed from bookshelf.`
         })
-    } catch (error) {
+    }
+    catch (error) {
         return response.json({
             message: error.message
         })
     }
-    
-
 })
 
 module.exports = router
