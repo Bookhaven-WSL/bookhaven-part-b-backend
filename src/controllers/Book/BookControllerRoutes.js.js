@@ -1,8 +1,7 @@
 const express = require("express")
 const { Book } = require("../../models/BookModel")
-const { getSingleApiEntry, getMultipleApiEntries } = require("../../functions/APIrequest")
+const { getSingleApiEntry, getMultipleApiEntriesTitle, getMultipleApiEntriesGenre } = require("../../functions/APIrequest")
 const router = express.Router()
-
 
 router.post("/", async (request, response) => {
     try {
@@ -55,9 +54,12 @@ router.post("/", async (request, response) => {
 
 router.post ("/to-be-read", async (request, response) => {
     try {
-        const result = await getSingleApiEntry() 
 
-        const newBook = await Book.create(result)
+        let key = request.body.key 
+
+        const result = await getSingleApiEntry(key)
+
+        const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "toBeRead"})
     
         return response.status(201).json ({
             success: true,
@@ -65,15 +67,18 @@ router.post ("/to-be-read", async (request, response) => {
         })
     } catch (error) {
         console.error("Error adding book", error);
-        return response.status(501).json(error)
+        return response.status(501).json(error.message)
     }
 })
 
 router.post ("/read", async (request, response) => {
     try {
-        const result = await getSingleApiEntry() 
 
-        const newBook = await Book.create(result)
+        let key = request.body.key 
+
+        const result = await getSingleApiEntry(key)
+
+        const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "read"})
     
         return response.status(201).json ({
             success: true,
@@ -81,7 +86,7 @@ router.post ("/read", async (request, response) => {
         })
     } catch (error) {
         console.error("Error adding book", error);
-        return response.status(501).json(error)
+        return response.status(501).json(error.message)
     }
 })
 
@@ -105,10 +110,8 @@ router.get ("/search", async (request, response) => {
 
     let title = request.body.title
     let authors = request.body.authors
-    let genre = request.body.genre
-    let publishYear = request.body.publishYear
     
-    let result = await Book.findOne({title: title, authors: authors, genre: genre, publishYear: publishYear})
+    let result = await Book.findOne({title: title, authors: authors})
 
     if (!result) {
         response.status(400).json({
@@ -226,8 +229,5 @@ router.delete("/", async (request, response) => {
     
 
 })
-
-
-
 
 module.exports = router

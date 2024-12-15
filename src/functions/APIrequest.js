@@ -24,7 +24,7 @@ async function getMultipleApiEntriesTitle (title) {
                 let imgOlid = key.slice(7)
                 let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
-                body.push([{"olid": key}, {"title": title}, {"Author": authors}, {"Genres": genre}, {"Published Year": publishYear}, {"Image URL": imgURL}])
+                body.push([{"olid": key}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
             }
             return body
         }
@@ -75,7 +75,7 @@ async function getMultipleApiEntriesGenre (genre) {
                 let imgOlid = key.slice(7)
                 let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
-                body.push([{"olid": key}, {"title": title}, {"Author": authors}, {"Genres": genre}, {"Published Year": publishYear}, {"Image URL": imgURL}])
+                body.push([{"olid": key}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
             }
             return body
         }
@@ -121,7 +121,7 @@ async function getSingleApiEntry (formattedKey) {
             let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
             let body = []
-            body.push([{"olid": key}, {"title": title}, {"Author": authors}, {"Genres": genre}, {"Published Year": publishYear}, {"Image URL": imgURL}])
+            body.push([{"olid": key}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
 
             return body
         }
