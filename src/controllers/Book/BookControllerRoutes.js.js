@@ -111,7 +111,24 @@ router.post ("/recommended", async (request, response) => {
     }
 })
 
-router.post ("/search", async (request, response) => {
+router.post ("/search-new", async (request, response) => {
+    try {
+
+        let title = request.body.title
+
+        const result = await getMultipleApiEntriesTitle(title)
+
+        return response.json ({
+            success: true,
+            books: result
+        })
+    } catch (error) {
+        console.error("Error displaying books", error);
+        return response.status(501).json(error.message)
+    }
+})
+
+router.post ("/search-personal", async (request, response) => {
     try {
 
         let title = request.body.title
