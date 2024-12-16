@@ -21,6 +21,12 @@ router.post("/", UserAuthValidation, async (request, response) => {
             })
             return
         }
+        
+        const validShelves = ['read', 'tobeRead', 'recommended'];
+        if (!validShelves.includes(shelf)) {
+            throw new Error ("Please input a correct shelf");
+        }
+
 
         let bookCheck = await Book.exists({olid: olid, title: title, authors: authors})
 
@@ -55,7 +61,7 @@ router.post("/", UserAuthValidation, async (request, response) => {
 router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
     try {
 
-        let key = request.body.key 
+        let olid = request.body.olid
         let associatedEmail = request.authUserData.email
 
         const result = await getSingleApiEntry(key)
@@ -82,7 +88,7 @@ router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
 router.post ("/read", UserAuthValidation, async (request, response) => {
     try {
 
-        let key = request.body.key
+        let olid = request.body.olid
         let associatedEmail = request.authUserData.email
 
         const result = await getSingleApiEntry(key)
@@ -236,8 +242,8 @@ router.get ("/recommended", UserAuthValidation, async (request, response) => {
 router.patch("/update", UserAuthValidation, async (request, response) => {
     try {
         let title = request.body.title
-        let newRating = request.body.rating
-        let newShelf = request.body.shelf
+        let newRating = request.body.rating || rating
+        let newShelf = request.body.shelf || shelf
         let associatedEmail = request.authUserData.email
        
         if (!newRating || !newShelf) {
@@ -245,6 +251,11 @@ router.patch("/update", UserAuthValidation, async (request, response) => {
                 message: "Please enter details to update books rating or shelf location."
             })
             return
+        }
+
+        const validShelves = ['read', 'tobeRead', 'recommended'];
+        if (!validShelves.includes(shelf)) {
+            throw new Error ("Please input a correct shelf");
         }
 
         let bookCheck = await Book.findOne({title: title, associatedEmail: associatedEmail})
@@ -289,7 +300,7 @@ router.delete("/delete", UserAuthValidation, async (request, response) => {
         let book = await Book.deleteOne({title: title, associatedEmail: associatedEmail})
 
         response.json ({
-            message: "Book has been removed from bookshelf."
+            message: `${book.title} has been removed from bookshelf.`
         })
     }
     catch (error) {
