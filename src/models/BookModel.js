@@ -38,6 +38,13 @@ const BookSchema = new mongoose.Schema({
         type: String,
         enum: ['toBeRead', 'read', 'recommended'],
         default: 'toBeRead',
+    },
+    associatedEmail: {
+        type: String,
+        required: true,
+        minLength: 10,
+        trim: true,
+        lowercase: true
     }
 })
 
