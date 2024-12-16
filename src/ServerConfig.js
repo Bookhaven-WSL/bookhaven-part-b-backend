@@ -34,9 +34,9 @@ app.get("/", (request, response) => {
 app.get("/testRoute", UserAuthValidation, async (request, response) => {
     //const APIresult = await getMultipleApiEntriesTitle("The Lord of The Rings")
     //const APIresult = await getSingleApiEntry("OL27448W")
-    const APIresult = await getMultipleApiEntriesGenre("Fiction")
+    //const APIresult = await getMultipleApiEntriesGenre("Fiction")
     response.json({
-        response: APIresult
+        response: request.authUserData
     })
 })
 

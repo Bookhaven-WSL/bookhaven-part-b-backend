@@ -1,9 +1,10 @@
 const express = require("express")
 const { Book } = require("../../models/BookModel")
 const { getSingleApiEntry, getMultipleApiEntriesTitle, getMultipleApiEntriesGenre } = require("../../functions/APIrequest")
+const { UserAuthValidation } = require("../../functions/JWTFunctions")
 const router = express.Router()
 
-router.post("/", async (request, response) => {
+router.post("/", UserAuthValidation, async (request, response) => {
     try {
         let olid = request.body.olid
         let title = request.body.title
@@ -12,6 +13,7 @@ router.post("/", async (request, response) => {
         let publishYear = request.body.publishYear
         let rating = request.body.rating
         let shelf = request.body.shelf
+        let associatedEmail = request.authUserData.email
 
         if (!title || !authors) {
             response.status(400).json({
@@ -20,7 +22,7 @@ router.post("/", async (request, response) => {
             return
         }
 
-        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, shelf: shelf})
+        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors})
 
         if (bookCheck) {
             response.status(400).json({
@@ -29,8 +31,7 @@ router.post("/", async (request, response) => {
             return
         }
 
-        let newBook = await Book.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf: shelf})
-
+        let newBook = await Book.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf: shelf, associatedEmail: associatedEmail})
 
         response.json({
             book: {
@@ -41,7 +42,6 @@ router.post("/", async (request, response) => {
                 publishYear: publishYear,
                 rating: newBook.rating,
                 shelf: shelf
-    
             }
         })
     }
@@ -52,60 +52,77 @@ router.post("/", async (request, response) => {
     }
 })
 
-router.post ("/to-be-read", async (request, response) => {
+router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
     try {
 
         let key = request.body.key 
+        let associatedEmail = request.authUserData.email
 
         const result = await getSingleApiEntry(key)
 
-        const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "toBeRead"})
+        const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "toBeRead", associatedEmail: associatedEmail})
     
-        return response.status(201).json ({
-            success: true,
-            data: newBook
+        response.json({
+            book: {
+                olid: newBook.olid,
+                title: newBook.title,
+                authors: newBook.authors,
+                genre: newBook.genre,
+                publishYear: newBook.publishYear,
+                shelf: newBook.shelf
+            }
         })
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error adding book", error);
         return response.status(501).json(error.message)
     }
 })
 
-router.post ("/read", async (request, response) => {
+router.post ("/read", UserAuthValidation, async (request, response) => {
     try {
 
-        let key = request.body.key 
+        let key = request.body.key
+        let associatedEmail = request.authUserData.email
 
         const result = await getSingleApiEntry(key)
 
-        const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "read"})
+        const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "read", associatedEmail: associatedEmail})
     
-        return response.status(201).json ({
-            success: true,
-            data: newBook
+        response.json({
+            book: {
+                olid: newBook.olid,
+                title: newBook.title,
+                authors: newBook.authors,
+                genre: newBook.genre,
+                publishYear: newBook.publishYear,
+                shelf: newBook.shelf
+            }
         })
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error adding book", error);
         return response.status(501).json(error.message)
     }
 })
 
-router.post ("/recommended", async (request, response) => {
+router.post ("/recommended", UserAuthValidation, async (request, response) => {
     try {
 
         let genre = request.body.genre
+        let associatedEmail = request.authUserData.email
 
         const result = await getMultipleApiEntriesGenre(genre)
 
         for (let books of result) {
-            await Book.create({ olid: books[0].olid, title: books[1].title, authors: books[2].authors, genre: books[3].genres, publishYear: books[4].publishYear, coverImage: books[5].coverImage, shelf: "recommended"})
+            await Book.create({ olid: books[0].olid, title: books[1].title, authors: books[2].authors, genre: books[3].genres, publishYear: books[4].publishYear, coverImage: books[5].coverImage, shelf: "recommended", associatedEmail: associatedEmail})
         }
 
-        return response.status(201).json ({
-            success: true,
+        return response.json ({
             message: "Recommended books successfully added to database!"
         })
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error adding books", error);
         return response.status(501).json(error.message)
     }
@@ -122,19 +139,21 @@ router.post ("/search-new", async (request, response) => {
             success: true,
             books: result
         })
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error displaying books", error);
         return response.status(501).json(error.message)
     }
 })
 
-router.post ("/search-personal", async (request, response) => {
+router.post ("/search-personal", UserAuthValidation, async (request, response) => {
     try {
 
         let title = request.body.title
         let shelf = request.body.shelf
+        let associatedEmail = request.authUserData.email
         
-        let result = await Book.findOne({title: title, shelf: shelf})
+        let result = await Book.findOne({title: title, shelf: shelf, associatedEmail: associatedEmail})
 
         if (!result) {
             response.status(400).json({
@@ -143,8 +162,15 @@ router.post ("/search-personal", async (request, response) => {
             return
         }
 
-        return response.json({
-            book: result
+        response.json({
+            book: {
+                olid: result.olid,
+                title: result.title,
+                authors: result.authors,
+                genre: result.genre,
+                publishYear: result.publishYear,
+                shelf: result.shelf
+            }
         })
     }
     catch (error) {
@@ -153,26 +179,12 @@ router.post ("/search-personal", async (request, response) => {
     }
 })
 
-router.get ("/to-be-read", async (request, response) => {
-    try { 
+router.get ("/to-be-read", UserAuthValidation, async (request, response) => {
+    try {
 
-        let books = await Book.find({shelf:"toBeRead"});
+        let associatedEmail = request.authUserData.email
 
-        return response.json({ 
-            books
-        })
-    }
-    catch (error) {
-        return response.status(500).json({
-            message: error.message
-        })
-    }
-})
-
-router.get ("/read", async (request, response) => {
-    try { 
-
-        let books = await Book.find({shelf:"read"});
+        let books = await Book.find({shelf:"toBeRead", associatedEmail: associatedEmail});
 
         return response.json({ 
             books
@@ -185,9 +197,12 @@ router.get ("/read", async (request, response) => {
     }
 })
 
-router.get ("/recommended", async (request, response) => {
-    try { 
-        let books = await Book.find({shelf:"recommended"});
+router.get ("/read", UserAuthValidation, async (request, response) => {
+    try {
+
+        let associatedEmail = request.authUserData.email
+
+        let books = await Book.find({shelf:"read", associatedEmail: associatedEmail});
 
         return response.json({ 
             books
@@ -200,11 +215,30 @@ router.get ("/recommended", async (request, response) => {
     }
 })
 
-router.patch("/update", async (request, response) => {
+router.get ("/recommended", UserAuthValidation, async (request, response) => {
+    try {
+
+        let associatedEmail = request.authUserData.email
+
+        let books = await Book.find({shelf:"recommended", associatedEmail: associatedEmail});
+
+        return response.json({ 
+            books
+        })
+    }
+    catch (error) {
+        return response.status(500).json({
+            message: error.message
+        })
+    }
+})
+
+router.patch("/update", UserAuthValidation, async (request, response) => {
     try {
         let title = request.body.title
         let newRating = request.body.rating
         let newShelf = request.body.shelf
+        let associatedEmail = request.authUserData.email
        
         if (!newRating || !newShelf) {
             response.status(400).json({
@@ -213,7 +247,7 @@ router.patch("/update", async (request, response) => {
             return
         }
 
-        let bookCheck = await Book.findOne({title: title})
+        let bookCheck = await Book.findOne({title: title, associatedEmail: associatedEmail})
 
         if (bookCheck === null) {
             response.status(400).json({
@@ -222,10 +256,9 @@ router.patch("/update", async (request, response) => {
             return
         }
 
-        let updatedBook = await Book.findOneAndUpdate({title: title}, {rating: newRating, shelf: newShelf})
+        let updatedBook = await Book.findOneAndUpdate({title: title, associatedEmail: associatedEmail}, {rating: newRating, shelf: newShelf})
 
         response.json({
-            success: true,
             message: `${updatedBook.title} has been updated`
         })
     }
@@ -237,13 +270,14 @@ router.patch("/update", async (request, response) => {
 })
 
 
-router.delete("/", async (request, response) => {
+router.delete("/delete", UserAuthValidation, async (request, response) => {
     try{
 
         let title = request.body.title
         let authors = request.body.authors
+        let associatedEmail = request.authUserData.email
         
-        let result = await Book.findOne({title: title, authors: authors})
+        let result = await Book.findOne({title: title, authors: authors, associatedEmail: associatedEmail})
 
         if (result === null) {
         response.status(400).json({
@@ -252,10 +286,10 @@ router.delete("/", async (request, response) => {
         return
         }
 
-        let book = await Book.deleteOne({title: title})
+        let book = await Book.deleteOne({title: title, associatedEmail: associatedEmail})
 
-        response.status(200).json ({
-            message: `Book has been removed from bookshelf.`
+        response.json ({
+            message: "Book has been removed from bookshelf."
         })
     }
     catch (error) {
