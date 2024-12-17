@@ -27,7 +27,6 @@ router.post("/", UserAuthValidation, async (request, response) => {
             throw new Error ("Please input a correct shelf");
         }
 
-
         let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
 
         if (bookCheck) {
@@ -38,6 +37,7 @@ router.post("/", UserAuthValidation, async (request, response) => {
         }
 
         let newBook = await Book.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf: shelf, associatedEmail: associatedEmail})
+        
 
         response.json({
             book: {
@@ -66,7 +66,7 @@ router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
 
         const result = await getSingleApiEntry(olid)
 
-        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
+        let bookCheck = await Book.exists({olid: olid, associatedEmail: associatedEmail})
 
         if (bookCheck) {
             response.status(400).json({
@@ -102,7 +102,7 @@ router.post ("/read", UserAuthValidation, async (request, response) => {
 
         const result = await getSingleApiEntry(olid)
 
-        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
+        let bookCheck = await Book.exists({olid: olid, associatedEmail: associatedEmail})
 
         if (bookCheck) {
             response.status(400).json({
@@ -123,11 +123,12 @@ router.post ("/read", UserAuthValidation, async (request, response) => {
                 shelf: newBook.shelf
             }
         })
-    }
-    catch (error) {
+    
+     }catch (error) {
         console.error("Error adding book", error);
         return response.status(501).json(error.message)
     }
+    
 })
 
 router.post ("/recommended", UserAuthValidation, async (request, response) => {
@@ -264,11 +265,7 @@ router.patch("/update", UserAuthValidation, async (request, response) => {
         let associatedEmail = request.authUserData.email
        
 
-        const validShelves = ['read', 'tobeRead', 'recommended'];
-        if (!validShelves.includes(shelf)) {
-            throw new Error ("Please input a correct shelf");
-        }
-
+   
         let bookCheck = await Book.findOne({title: title, associatedEmail: associatedEmail})
 
 
@@ -281,15 +278,21 @@ router.patch("/update", UserAuthValidation, async (request, response) => {
 
         let newRating = request.body.rating || bookCheck.rating
         let newShelf = request.body.shelf || bookCheck.shelf
+        const validShelves = ['read', 'toBeRead', 'recommended'];
 
+        if(request.body.shelf){
+            
+            if (!validShelves.includes(request.body.shelf)) {
+                throw new Error ("Please input a correct shelf");
+            }
+        }
 
         let updatedBook = await Book.findOneAndUpdate({title: title, associatedEmail: associatedEmail}, {rating: newRating, shelf: newShelf})
 
         response.json({
             message: `${updatedBook.title} has been updated`
         })
-    }
-    catch (error) {
+    } catch (error) {
         response.status(501).json({
             message: error.message
         })

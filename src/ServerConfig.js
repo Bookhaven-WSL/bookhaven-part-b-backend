@@ -42,7 +42,7 @@ app.get("/testRoute", UserAuthValidation, async (request, response) => {
 
 app.use("/auth", AuthControllerRoutes)
 
-app.use("/books", BookController)
+app.use("/book", BookController)
 
 app.use("/user", UserControllerRoutes)
 
