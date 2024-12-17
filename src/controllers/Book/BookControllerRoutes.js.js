@@ -2,6 +2,7 @@ const express = require("express")
 const { Book } = require("../../models/BookModel")
 const { getSingleApiEntry, getMultipleApiEntriesTitle, getMultipleApiEntriesGenre } = require("../../functions/APIrequest")
 const { UserAuthValidation } = require("../../functions/JWTFunctions")
+const { addBookToShelf } = require("../../functions/middlewareFunctions")
 const router = express.Router()
 
 router.post("/", UserAuthValidation, async (request, response) => {
@@ -58,11 +59,13 @@ router.post("/", UserAuthValidation, async (request, response) => {
     }
 })
 
+
 router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
     try {
 
         let olid = request.body.olid
         let associatedEmail = request.authUserData.email
+        const shelf = "toBeRead"
 
         const result = await getSingleApiEntry(olid)
 
@@ -77,6 +80,8 @@ router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
 
         const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "toBeRead", associatedEmail: associatedEmail})
     
+        const userBook = await addBookToShelf(olid, shelf, newBook, associatedEmail)
+
         response.json({
             book: {
                 olid: newBook.olid,
@@ -99,6 +104,7 @@ router.post ("/read", UserAuthValidation, async (request, response) => {
 
         let olid = request.body.olid
         let associatedEmail = request.authUserData.email
+        let shelf = "read"
 
         const result = await getSingleApiEntry(olid)
 
@@ -113,6 +119,8 @@ router.post ("/read", UserAuthValidation, async (request, response) => {
 
         const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "read", associatedEmail: associatedEmail})
     
+        const userBook = await addBookToShelf(olid, shelf, newBook, associatedEmail)
+
         response.json({
             book: {
                 olid: newBook.olid,
@@ -136,12 +144,15 @@ router.post ("/recommended", UserAuthValidation, async (request, response) => {
 
         let genre = request.body.genre
         let associatedEmail = request.authUserData.email
+        let shelf = "recommended"
 
         const result = await getMultipleApiEntriesGenre(genre)
 
         for (let books of result) {
             await Book.create({ olid: books[0].olid, title: books[1].title, authors: books[2].authors, genre: books[3].genres, publishYear: books[4].publishYear, coverImage: books[5].coverImage, shelf: "recommended", associatedEmail: associatedEmail})
         }
+
+        const userBook = await addBookToShelf(olid, shelf, newBook, associatedEmail)
 
         return response.json ({
             message: "Recommended books successfully added to database!"
