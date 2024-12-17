@@ -4,7 +4,7 @@ const BookSchema = new mongoose.Schema({
     olid: {
         type: String,
         required: true,
-        unique: true
+        // unique: true
     },
     title: {
         type: String,
