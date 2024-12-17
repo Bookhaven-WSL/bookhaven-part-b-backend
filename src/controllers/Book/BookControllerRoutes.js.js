@@ -64,7 +64,7 @@ router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
         let olid = request.body.olid
         let associatedEmail = request.authUserData.email
 
-        const result = await getSingleApiEntry(key)
+        const result = await getSingleApiEntry(olid)
 
         let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
 
@@ -100,7 +100,7 @@ router.post ("/read", UserAuthValidation, async (request, response) => {
         let olid = request.body.olid
         let associatedEmail = request.authUserData.email
 
-        const result = await getSingleApiEntry(key)
+        const result = await getSingleApiEntry(olid)
 
         let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
 

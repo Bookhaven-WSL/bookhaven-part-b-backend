@@ -15,16 +15,16 @@ async function getMultipleApiEntriesTitle (title) {
 
             let body = []
             for (let book of smallBody) {
-                let key = book.key
+                let olid = book.key
                 let title = book.title
                 let authors = book.author_name
                 let genre = book.subject
                 let publishYear = book.first_publish_year
 
-                let imgOlid = key.slice(7)
+                let imgOlid = olid.slice(7)
                 let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
-                body.push([{"olid": key}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
+                body.push([{"olid": olid}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
             }
             return body
         }
@@ -66,7 +66,7 @@ async function getMultipleApiEntriesGenre (genre) {
 
             let body = []
             for (let book of smallBody) {
-                let key = book.key
+                let olid = book.key
                 let title = book.title
                 let authors = book.author_name
                 let genre = book.subject
@@ -75,7 +75,7 @@ async function getMultipleApiEntriesGenre (genre) {
                 let imgOlid = olid.slice(7)
                 let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
-                body.push([{"olid": key}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
+                body.push([{"olid": olid}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
             }
             return body
         }
