@@ -1,5 +1,7 @@
 
-async function addBookToShelf(olid, shelf, newBook) {
+const { User } = require("../models/UserModel")
+
+async function addBookToShelf(olid, shelf, newBook, associatedEmail) {
     try {
         const validShelves = ["toBeRead", "read", "recommended"];
         if (!validShelves.includes(shelf)) {
@@ -31,4 +33,8 @@ async function getBooksFromShelf(associatedEmail, shelf) {
         console.error(error.message);
         throw error;
     }
+}
+
+module.exports = {
+    addBookToShelf, getBooksFromShelf
 }
