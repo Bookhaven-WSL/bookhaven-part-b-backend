@@ -28,7 +28,7 @@ router.post("/", UserAuthValidation, async (request, response) => {
         }
 
 
-        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors})
+        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
 
         if (bookCheck) {
             response.status(400).json({
