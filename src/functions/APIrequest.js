@@ -72,7 +72,7 @@ async function getMultipleApiEntriesGenre (genre) {
                 let genre = book.subject
                 let publishYear = book.first_publish_year
 
-                let imgOlid = key.slice(7)
+                let imgOlid = olid.slice(7)
                 let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
                 body.push([{"olid": key}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
@@ -111,17 +111,17 @@ async function getSingleApiEntry (formattedKey) {
             let smallBody = []
             smallBody.push(largeBody.docs[0])
 
-            let key = smallBody[0].key
+            let olid = smallBody[0].key
             let title = smallBody[0].title
             let authors = smallBody[0].author_name
             let genre = smallBody[0].subject
             let publishYear = smallBody[0].first_publish_year
 
-            let imgOlid = key.slice(7)
+            let imgOlid = olid.slice(7)
             let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
             let body = []
-            body.push([{"olid": key}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
+            body.push([{"olid": olid}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
 
             return body
         }

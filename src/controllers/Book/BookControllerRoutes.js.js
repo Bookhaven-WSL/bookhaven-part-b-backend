@@ -66,6 +66,15 @@ router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
 
         const result = await getSingleApiEntry(key)
 
+        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
+
+        if (bookCheck) {
+            response.status(400).json({
+                message: "This book is already in your bookshelf "
+            })
+            return
+        }
+
         const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "toBeRead", associatedEmail: associatedEmail})
     
         response.json({
@@ -92,6 +101,15 @@ router.post ("/read", UserAuthValidation, async (request, response) => {
         let associatedEmail = request.authUserData.email
 
         const result = await getSingleApiEntry(key)
+
+        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
+
+        if (bookCheck) {
+            response.status(400).json({
+                message: "This book is already in your bookshelf "
+            })
+            return
+        }
 
         const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "read", associatedEmail: associatedEmail})
     
