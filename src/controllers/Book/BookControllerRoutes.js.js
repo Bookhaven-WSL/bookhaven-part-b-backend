@@ -22,11 +22,10 @@ router.post("/", UserAuthValidation, async (request, response) => {
             return
         }
         
-        // const validShelves = ['read', 'tobeRead', 'recommended'];
-        // if (!validShelves.includes(shelf)) {
-        //     throw new Error ("Please input a correct shelf");
-        // }
-
+        const validShelves = ['read', 'tobeRead', 'recommended'];
+        if (!validShelves.includes(shelf)) {
+            throw new Error ("Please input a correct shelf");
+        }
 
         let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
 
@@ -37,11 +36,8 @@ router.post("/", UserAuthValidation, async (request, response) => {
             return
         }
 
-        // let newBook = await Book.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf: shelf, associatedEmail: associatedEmail})
+        let newBook = await Book.create({ olid: olid, title: title, authors: authors, genre: genre, publishYear: publishYear, rating: rating, shelf: shelf, associatedEmail: associatedEmail})
         
-        let newBook = await getSingleApiEntry(olid)
-
-        let userBook = await addBookToShelf(olid, shelf, newBook);
 
         response.json({
             book: {
@@ -79,9 +75,7 @@ router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
             return
         }
 
-        // const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "toBeRead", associatedEmail: associatedEmail})
-
-        const newBook = await User.bookshelves.toBeRead.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "toBeRead", associatedEmail: associatedEmail})
+        const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "toBeRead", associatedEmail: associatedEmail})
     
         response.json({
             book: {
@@ -284,11 +278,11 @@ router.patch("/update", UserAuthValidation, async (request, response) => {
 
         let newRating = request.body.rating || bookCheck.rating
         let newShelf = request.body.shelf || bookCheck.shelf
-        const validShelves = ['read', 'tobeRead', 'recommended'];
+        const validShelves = ['read', 'toBeRead', 'recommended'];
 
         if(request.body.shelf){
             
-            if (!validShelves.includes(bookCheck.shelf)) {
+            if (!validShelves.includes(request.body.shelf)) {
                 throw new Error ("Please input a correct shelf");
             }
         }
