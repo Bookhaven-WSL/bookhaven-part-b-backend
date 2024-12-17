@@ -28,7 +28,7 @@ router.post("/", UserAuthValidation, async (request, response) => {
         }
 
 
-        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors})
+        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
 
         if (bookCheck) {
             response.status(400).json({
@@ -64,7 +64,16 @@ router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
         let olid = request.body.olid
         let associatedEmail = request.authUserData.email
 
-        const result = await getSingleApiEntry(key)
+        const result = await getSingleApiEntry(olid)
+
+        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
+
+        if (bookCheck) {
+            response.status(400).json({
+                message: "This book is already in your bookshelf "
+            })
+            return
+        }
 
         const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "toBeRead", associatedEmail: associatedEmail})
     
@@ -91,7 +100,16 @@ router.post ("/read", UserAuthValidation, async (request, response) => {
         let olid = request.body.olid
         let associatedEmail = request.authUserData.email
 
-        const result = await getSingleApiEntry(key)
+        const result = await getSingleApiEntry(olid)
+
+        let bookCheck = await Book.exists({olid: olid, title: title, authors: authors, associatedEmail: associatedEmail})
+
+        if (bookCheck) {
+            response.status(400).json({
+                message: "This book is already in your bookshelf "
+            })
+            return
+        }
 
         const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "read", associatedEmail: associatedEmail})
     
@@ -242,16 +260,9 @@ router.get ("/recommended", UserAuthValidation, async (request, response) => {
 router.patch("/update", UserAuthValidation, async (request, response) => {
     try {
         let title = request.body.title
-        let newRating = request.body.rating || rating
-        let newShelf = request.body.shelf || shelf
+       
         let associatedEmail = request.authUserData.email
        
-        if (!newRating || !newShelf) {
-            response.status(400).json({
-                message: "Please enter details to update books rating or shelf location."
-            })
-            return
-        }
 
         const validShelves = ['read', 'tobeRead', 'recommended'];
         if (!validShelves.includes(shelf)) {
@@ -260,12 +271,17 @@ router.patch("/update", UserAuthValidation, async (request, response) => {
 
         let bookCheck = await Book.findOne({title: title, associatedEmail: associatedEmail})
 
+
         if (bookCheck === null) {
             response.status(400).json({
                 message: "Sorry, it appears that book is not in your shelf."
             })
             return
         }
+
+        let newRating = request.body.rating || bookCheck.rating
+        let newShelf = request.body.shelf || bookCheck.shelf
+
 
         let updatedBook = await Book.findOneAndUpdate({title: title, associatedEmail: associatedEmail}, {rating: newRating, shelf: newShelf})
 

@@ -15,16 +15,16 @@ async function getMultipleApiEntriesTitle (title) {
 
             let body = []
             for (let book of smallBody) {
-                let key = book.key
+                let olid = book.key
                 let title = book.title
                 let authors = book.author_name
                 let genre = book.subject
                 let publishYear = book.first_publish_year
 
-                let imgOlid = key.slice(7)
+                let imgOlid = olid.slice(7)
                 let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
-                body.push([{"olid": key}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
+                body.push([{"olid": olid}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
             }
             return body
         }
@@ -66,16 +66,16 @@ async function getMultipleApiEntriesGenre (genre) {
 
             let body = []
             for (let book of smallBody) {
-                let key = book.key
+                let olid = book.key
                 let title = book.title
                 let authors = book.author_name
                 let genre = book.subject
                 let publishYear = book.first_publish_year
 
-                let imgOlid = key.slice(7)
+                let imgOlid = olid.slice(7)
                 let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
-                body.push([{"olid": key}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
+                body.push([{"olid": olid}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
             }
             return body
         }
@@ -100,9 +100,11 @@ async function getMultipleApiEntriesGenre (genre) {
     }
 }
 
-async function getSingleApiEntry (formattedKey) {
+async function getSingleApiEntry (olid) {
     try {
 
+        let formattedKey = olid.slice(7);
+        
         const response = await fetch(`https://openlibrary.org/search.json?q=${formattedKey}`, {
             methods: "GET"
         })
@@ -111,17 +113,17 @@ async function getSingleApiEntry (formattedKey) {
             let smallBody = []
             smallBody.push(largeBody.docs[0])
 
-            let key = smallBody[0].key
+            let olid = smallBody[0].key
             let title = smallBody[0].title
             let authors = smallBody[0].author_name
             let genre = smallBody[0].subject
             let publishYear = smallBody[0].first_publish_year
 
-            let imgOlid = key.slice(7)
+            let imgOlid = olid.slice(7)
             let imgURL = `https://covers.openlibrary.org/w/olid/${imgOlid}-M.jpg`
 
             let body = []
-            body.push([{"olid": key}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
+            body.push([{"olid": olid}, {"title": title}, {"authors": authors}, {"genres": genre}, {"publishYear": publishYear}, {"coverImage": imgURL}])
 
             return body
         }
