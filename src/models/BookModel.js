@@ -47,6 +47,8 @@ const BookSchema = new mongoose.Schema({
     }
 })
 
+BookSchema.index({ olid: 1, associatedEmail: 1 }, { unique: true });
+
 const Book = mongoose.model("Book", BookSchema)
 
 module.exports = {
