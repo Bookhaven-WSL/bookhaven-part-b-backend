@@ -261,13 +261,9 @@ router.get ("/recommended", UserAuthValidation, async (request, response) => {
 router.patch("/update", UserAuthValidation, async (request, response) => {
     try {
         let title = request.body.title
-       
         let associatedEmail = request.authUserData.email
        
-
-   
         let bookCheck = await Book.findOne({title: title, associatedEmail: associatedEmail})
-
 
         if (bookCheck === null) {
             response.status(400).json({
@@ -304,10 +300,9 @@ router.delete("/delete", UserAuthValidation, async (request, response) => {
     try{
 
         let title = request.body.title
-        let authors = request.body.authors
         let associatedEmail = request.authUserData.email
         
-        let result = await Book.findOne({title: title, authors: authors, associatedEmail: associatedEmail})
+        let result = await Book.findOne({title: title, associatedEmail: associatedEmail})
 
         if (result === null) {
         response.status(400).json({
@@ -319,7 +314,7 @@ router.delete("/delete", UserAuthValidation, async (request, response) => {
         let book = await Book.deleteOne({title: title, associatedEmail: associatedEmail})
 
         response.json ({
-            message: `${book.title} has been removed from bookshelf.`
+            message: `${result.title} has been removed from bookshelf.`
         })
     }
     catch (error) {
