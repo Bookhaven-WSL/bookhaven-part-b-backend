@@ -104,7 +104,7 @@ router.post ("/read", UserAuthValidation, async (request, response) => {
 
         let olid = request.body.olid
         let associatedEmail = request.authUserData.email
-        // let shelf = "read"
+        let shelf = "read"
 
         const result = await getSingleApiEntry(olid)
 
@@ -119,7 +119,7 @@ router.post ("/read", UserAuthValidation, async (request, response) => {
 
         const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "read", associatedEmail: associatedEmail})
     
-        // const userBook = await addBookToShelf(olid, shelf, newBook, associatedEmail)
+        const userBook = await addBookToShelf(olid, shelf, newBook, associatedEmail)
 
         response.json({
             book: {
