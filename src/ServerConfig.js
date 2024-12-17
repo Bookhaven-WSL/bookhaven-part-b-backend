@@ -15,8 +15,7 @@ const BookController = require("./controllers/Book/BookControllerRoutes.js.js")
 const UserControllerRoutes = require("./controllers/User/UserControllerRoutes.js")
 
 let corsURLs = {
-    origin: ["http://localhost:8080", "https://bookhaven-part-b-backend.onrender.com/"],
-    allowedOrigins: ["http://localhost:5173"],
+    origin: ["http://localhost:8080", "https://bookhaven-part-b-backend.onrender.com/", "http://localhost:5173"],
     URLSuccessStatus: 200
 }
 app.use(cors(corsURLs))
