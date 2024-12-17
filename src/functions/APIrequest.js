@@ -100,9 +100,11 @@ async function getMultipleApiEntriesGenre (genre) {
     }
 }
 
-async function getSingleApiEntry (formattedKey) {
+async function getSingleApiEntry (olid) {
     try {
 
+        let formattedKey = olid.slice(7);
+        
         const response = await fetch(`https://openlibrary.org/search.json?q=${formattedKey}`, {
             methods: "GET"
         })

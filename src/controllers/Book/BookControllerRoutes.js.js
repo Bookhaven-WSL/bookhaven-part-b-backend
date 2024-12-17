@@ -260,16 +260,9 @@ router.get ("/recommended", UserAuthValidation, async (request, response) => {
 router.patch("/update", UserAuthValidation, async (request, response) => {
     try {
         let title = request.body.title
-        let newRating = request.body.rating || rating
-        let newShelf = request.body.shelf || shelf
+       
         let associatedEmail = request.authUserData.email
        
-        if (!newRating || !newShelf) {
-            response.status(400).json({
-                message: "Please enter details to update books rating or shelf location."
-            })
-            return
-        }
 
         const validShelves = ['read', 'tobeRead', 'recommended'];
         if (!validShelves.includes(shelf)) {
@@ -278,12 +271,17 @@ router.patch("/update", UserAuthValidation, async (request, response) => {
 
         let bookCheck = await Book.findOne({title: title, associatedEmail: associatedEmail})
 
+
         if (bookCheck === null) {
             response.status(400).json({
                 message: "Sorry, it appears that book is not in your shelf."
             })
             return
         }
+
+        let newRating = request.body.rating || bookCheck.rating
+        let newShelf = request.body.shelf || bookCheck.shelf
+
 
         let updatedBook = await Book.findOneAndUpdate({title: title, associatedEmail: associatedEmail}, {rating: newRating, shelf: newShelf})
 
