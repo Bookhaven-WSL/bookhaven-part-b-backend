@@ -62,7 +62,7 @@ router.post("/", UserAuthValidation, async (request, response) => {
 
 router.post("/to-be-read", UserAuthValidation, async (request, response) => {
     try {
-        const { olid } = request.body;
+        const olid  = request.body.olid;
         const associatedEmail = request.authUserData.email;
 
         if (!olid || typeof olid !== "string") {
