@@ -60,29 +60,35 @@ router.post("/", UserAuthValidation, async (request, response) => {
 })
 
 
-router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
+router.post("/to-be-read", UserAuthValidation, async (request, response) => {
     try {
+        const { olid } = request.body.olid;
+        const associatedEmail = request.authUserData.email;
 
-        let olid = request.body.olid
-        let associatedEmail = request.authUserData.email
-        const shelf = "toBeRead"
+        
+        const result = await getSingleApiEntry(olid);
 
-        const result = await getSingleApiEntry(olid)
-
-        let bookCheck = await Book.exists({olid: olid, associatedEmail: associatedEmail})
-
-        if (bookCheck) {
-            response.status(400).json({
-                message: "This book is already in your bookshelf "
-            })
-            return
+        if (!result) {
+            return response.status(404).json({ message: "Book not found in API." });
         }
 
-        const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "toBeRead", associatedEmail: associatedEmail})
-    
-        const userBook = await addBookToShelf(olid, shelf, newBook, associatedEmail)
+        
+        const newBook = await Book.findOneAndUpdate(
+            { olid, associatedEmail },
+            {
+                $setOnInsert: {
+                    title: result[0][1].title,
+                    authors: result[0][2].authors,
+                    genre: result[0][3].genres,
+                    publishYear: result[0][4].publishYear,
+                    coverImage: result[0][5].coverImage,
+                    shelf: "toBeRead"
+                }
+            },
+            { upsert: true, new: true }
+        );
 
-        response.json({
+        response.status(201).json({
             book: {
                 olid: newBook.olid,
                 title: newBook.title,
@@ -91,13 +97,17 @@ router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
                 publishYear: newBook.publishYear,
                 shelf: newBook.shelf
             }
-        })
-    }
-    catch (error) {
+        });
+    } catch (error) {
         console.error("Error adding book", error);
-        return response.status(501).json(error.message)
+        if (error.code === 11000) {
+            response.status(400).json({ message: "Book already exists in your bookshelf." });
+        } else {
+            response.status(500).json({ message: error.message });
+        }
     }
-})
+});
+
 
 router.post ("/read", UserAuthValidation, async (request, response) => {
     try {
