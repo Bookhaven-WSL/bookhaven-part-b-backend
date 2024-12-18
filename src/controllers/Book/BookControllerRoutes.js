@@ -62,32 +62,45 @@ router.post("/", UserAuthValidation, async (request, response) => {
 
 router.post("/to-be-read", UserAuthValidation, async (request, response) => {
     try {
-        const { olid } = request.body.olid;
+        const { olid } = request.body;
         const associatedEmail = request.authUserData.email;
 
-        
+        // Fetch book details from the external API
         const result = await getSingleApiEntry(olid);
+        console.log("API Result:", result);
 
-        if (!result) {
-            return response.status(404).json({ message: "Book not found in API." });
+        // Validate the API response structure
+        if (!result || !Array.isArray(result) || result.length === 0 || !Array.isArray(result[0])) {
+            return response.status(404).json({ message: "Book not found or API response is invalid." });
         }
 
-        
+        // Safely destructure API result with default values
+        const [apiOlid, title = "Unknown Title", authors = ["Unknown Author"], genres = [], publishYear = "Unknown", coverImage = ""] = result[0] || [];
+
+        // Further validation
+        if (!title || authors.length === 0) {
+            return response.status(400).json({ message: "Invalid API response: Missing title or authors." });
+        }
+
+        // Insert or update the book in MongoDB
         const newBook = await Book.findOneAndUpdate(
-            { olid, associatedEmail },
+            { olid: apiOlid, associatedEmail },
             {
                 $setOnInsert: {
-                    title: result[0][1].title,
-                    authors: result[0][2].authors,
-                    genre: result[0][3].genres,
-                    publishYear: result[0][4].publishYear,
-                    coverImage: result[0][5].coverImage,
-                    shelf: "toBeRead"
+                    olid: apiOlid,
+                    title,
+                    authors,
+                    genre: genres,
+                    publishYear,
+                    coverImage,
+                    shelf: "toBeRead",
+                    associatedEmail
                 }
             },
             { upsert: true, new: true }
         );
 
+        // Return success response
         response.status(201).json({
             book: {
                 olid: newBook.olid,
@@ -99,11 +112,13 @@ router.post("/to-be-read", UserAuthValidation, async (request, response) => {
             }
         });
     } catch (error) {
-        console.error("Error adding book", error);
+        console.error("Error adding book:", error);
+
+        // Handle duplicate and generic errors
         if (error.code === 11000) {
-            response.status(400).json({ message: "Book already exists in your bookshelf." });
+            return response.status(400).json({ message: "Book already exists in your bookshelf." });
         } else {
-            response.status(500).json({ message: error.message });
+            return response.status(500).json({ message: error.message });
         }
     }
 });
