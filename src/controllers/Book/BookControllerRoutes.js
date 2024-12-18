@@ -1,5 +1,6 @@
 const express = require("express")
 const { Book } = require("../../models/BookModel")
+const { User } = require("../../models/UserModel")
 const { getSingleApiEntry, getMultipleApiEntriesTitle, getMultipleApiEntriesGenre } = require("../../functions/APIrequest")
 const { UserAuthValidation } = require("../../functions/JWTFunctions")
 const { addBookToShelf } = require("../../functions/middlewareFunctions")
@@ -59,83 +60,18 @@ router.post("/", UserAuthValidation, async (request, response) => {
     }
 })
 
-
-router.post("/to-be-read", UserAuthValidation, async (request, response) => {
-    try {
-        const olid  = request.body.olid;
-        const associatedEmail = request.authUserData.email;
-
-        if (!olid || typeof olid !== "string") {
-            return response.status(400).json({ message: "Invalid olid format." });
-        }
-
-        // Fetch book details from the external API
-        const result = await getSingleApiEntry(olid);
-        console.log("API Result:", result);
-
-        // Validate the API response structure
-        if (!result || !Array.isArray(result) || result.length === 0 || !Array.isArray(result[0])) {
-            return response.status(404).json({ message: "Book not found or API response is invalid." });
-        }
-
-        // Safely destructure API result with default values
-        const [apiOlid, title = "Unknown Title", authors = ["Unknown Author"], genres = [], publishYear = "Unknown", coverImage = ""] = result[0] || [];
-
-        // Further validation
-        if (!title || authors.length === 0) {
-            return response.status(400).json({ message: "Invalid API response: Missing title or authors." });
-        }
-
-        // Insert or update the book in MongoDB
-        const newBook = await Book.findOneAndUpdate(
-            { olid: apiOlid, associatedEmail },
-            {
-                $setOnInsert: {
-                    olid: apiOlid,
-                    title,
-                    authors,
-                    genre: genres,
-                    publishYear,
-                    coverImage,
-                    shelf: "toBeRead",
-                    associatedEmail
-                }
-            },
-            { upsert: true, new: true }
-        );
-
-        // Return success response
-        response.status(201).json({
-            book: {
-                olid: newBook.olid,
-                title: newBook.title,
-                authors: newBook.authors,
-                genre: newBook.genre,
-                publishYear: newBook.publishYear,
-                shelf: newBook.shelf
-            }
-        });
-    } catch (error) {
-        console.error("Error adding book:", error);
-
-        // Handle duplicate and generic errors
-        if (error.code === 11000) {
-            return response.status(400).json({ message: "Book already exists in your bookshelf." });
-        } else {
-            return response.status(500).json({ message: error.message });
-        }
-    }
-});
-
-
-router.post ("/read", UserAuthValidation, async (request, response) => {
+router.post ("/to-be-read", UserAuthValidation, async (request, response) => {
     try {
 
         let olid = request.body.olid
         let associatedEmail = request.authUserData.email
-        let shelf = "read"
+        let shelf = "toBeRead"
 
         const result = await getSingleApiEntry(olid)
+        
+        const olidString = result[0][0].olid; // Ensure that `olidString` is a string and not an object
+
+        console.log("OLID:", olidString); 
 
         let bookCheck = await Book.exists({olid: olid, associatedEmail: associatedEmail})
 
@@ -168,12 +104,53 @@ router.post ("/read", UserAuthValidation, async (request, response) => {
     
 })
 
+
+router.post ("/read", UserAuthValidation, async (request, response) => {
+    try {
+
+        let olid = request.body.olid
+        let associatedEmail = request.authUserData.email
+        // let shelf = "read"
+
+        const result = await getSingleApiEntry(olid)
+
+        let bookCheck = await Book.exists({olid: olid, associatedEmail: associatedEmail})
+
+        if (bookCheck) {
+            response.status(400).json({
+                message: "This book is already in your bookshelf "
+            })
+            return
+        }
+
+        const newBook = await Book.create({ olid: result[0][0].olid, title: result[0][1].title, authors: result[0][2].authors, genre: result[0][3].genres, publishYear: result[0][4].publishYear, coverImage: result[0][5].coverImage, shelf: "read", associatedEmail: associatedEmail})
+    
+        // const userBook = await addBookToShelf(olid, shelf, newBook, associatedEmail)
+
+        response.json({
+            book: {
+                olid: newBook.olid,
+                title: newBook.title,
+                authors: newBook.authors,
+                genre: newBook.genre,
+                publishYear: newBook.publishYear,
+                shelf: newBook.shelf
+            }
+        })
+    
+     }catch (error) {
+        console.error("Error adding book", error);
+        return response.status(501).json(error.message)
+    }
+    
+})
+
 router.post ("/recommended", UserAuthValidation, async (request, response) => {
     try {
 
         let genre = request.body.genre
         let associatedEmail = request.authUserData.email
-        let shelf = "recommended"
+        // let shelf = "recommended"
 
         const result = await getMultipleApiEntriesGenre(genre)
 
@@ -181,7 +158,7 @@ router.post ("/recommended", UserAuthValidation, async (request, response) => {
             await Book.create({ olid: books[0].olid, title: books[1].title, authors: books[2].authors, genre: books[3].genres, publishYear: books[4].publishYear, coverImage: books[5].coverImage, shelf: "recommended", associatedEmail: associatedEmail})
         }
 
-        const userBook = await addBookToShelf(olid, shelf, newBook, associatedEmail)
+        // const userBook = await addBookToShelf(olid, shelf, newBook, associatedEmail)
 
         return response.json ({
             message: "Recommended books successfully added to database!"
