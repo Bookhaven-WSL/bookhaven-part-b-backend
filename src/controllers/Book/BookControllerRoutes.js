@@ -65,6 +65,10 @@ router.post("/to-be-read", UserAuthValidation, async (request, response) => {
         const { olid } = request.body;
         const associatedEmail = request.authUserData.email;
 
+        if (!olid || typeof olid !== "string") {
+            return response.status(400).json({ message: "Invalid olid format." });
+        }
+
         // Fetch book details from the external API
         const result = await getSingleApiEntry(olid);
         console.log("API Result:", result);
