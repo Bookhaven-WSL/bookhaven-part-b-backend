@@ -11,7 +11,7 @@ router.post("/signup", async (request, response) => {
         let password = request.body.password
 
         if (!username || !email || !password) {
-            response.status(400).json({
+            response.json({
                 message: "Sorry, looks like you are missing username or password details."
             })
             return
@@ -20,7 +20,7 @@ router.post("/signup", async (request, response) => {
         let userCheck = await User.exists({email: email})
 
         if (userCheck) {
-            response.status(400).json({
+            response.json({
                 message: "Sorry, it appears that email is already registered."
             })
             return
