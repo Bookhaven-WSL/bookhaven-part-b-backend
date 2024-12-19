@@ -29,13 +29,14 @@ async function UserAuthValidation(request, response, next) {
     }
 
     let decodedData = decodeJWT(jwtToken)
+    console.log(decodedData)
     if (decodedData.userId) {
         request.authUserData = decodedData
         next()
     }
     else {
         return response.status(403).json({
-            message: "Please sign in to view your content."
+            message: "Why have you not signed in yet?"
         })
     }
 }
