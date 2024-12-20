@@ -22,9 +22,10 @@ function decodeJWT(codedJwtToken) {
 
 async function UserAuthValidation(request, response, next) {
     let jwtToken = request.headers.jwt
+    console.log(jwtToken)
     if (!jwtToken) {
         return response.status(403).json({
-            message: "Please sign in to view your content."
+            message: "Please, Please sign in to view your content."
         })
     }
 
