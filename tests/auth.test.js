@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const { MongoClient } = require("mongodb")
 const { User } = require("../src/models/UserModel.js");
 const { dbConnection, dbDisconnection } = require("../src/functions/DBFunctions.js");
+const bcrypt = require("bcrypt")
 
 const SECONDS = 1000;
 jest.setTimeout(50 * SECONDS)
@@ -14,11 +15,11 @@ describe("/auth/signup & /auth/login", () => {
 
     beforeAll(async () => {
         await dbConnection()
-      })
+        })
     
-      afterAll(async () => {
+        afterAll(async () => {
         await dbDisconnection()
-      })
+        })
 
     test("/auth/signup takes a users details, stores them to the database and returns them with a JWT", async () => {
         
@@ -44,22 +45,17 @@ describe("/auth/signup & /auth/login", () => {
     })
 
     test("auth/login takes a users details, and if they are stored in the database provides a welcome back message", async () => {
-
-        let email = "louis.denman@gmail.com"
-        const user = await User.findOne({email: email})
-
+        
         const response = await request(app)
             .post("/auth/login")
             .send({
-                    email: user.email,
+                    email: "louis.denman@gmail.com",
                     password: "Louis10xDeveloper"
                 })
             .expect(200)
 
             expect(response.body).toMatchObject({
-                message: ` Welcome back ${user.username}!`
+                message: ` Welcome back LMD!`
             })
-
-            await User.deleteOne({email: email})
     })
 })
